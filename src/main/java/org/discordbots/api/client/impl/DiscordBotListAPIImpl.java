@@ -81,10 +81,11 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         return get(url, BotStats.class);
     }
 
-    public CompletionStage<List<SimpleUser>> getVoters() {
+    public CompletionStage<List<SimpleUser>> getVoters(int page) {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("votes")
+                .addQueryParameter("page", String.valueOf(page <= 0 ? 1 : page))
                 .build();
 
         return get(url, resp -> {
