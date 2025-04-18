@@ -135,11 +135,11 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
                 .addQueryParameter("limit", String.valueOf(limit))
                 .addQueryParameter("offset", String.valueOf(offset));
 
-        if(sort != null) {
+        if (sort != null && (sort.equals("monthlyPoints") || sort.equals("id") || sort.equals("date"))) {
             urlBuilder.addQueryParameter("sort", sort);
         }
 
-        if(fields != null) {
+        if (fields != null) {
             String fieldsString = fields.stream()
                     .collect(Collectors.joining(" "));
 
