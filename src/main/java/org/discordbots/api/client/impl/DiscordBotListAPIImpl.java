@@ -114,6 +114,16 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     public CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort, List<String> fields) {
+        if (limit > 500) {
+            limit = 500;
+        } else if (limit <= 0) {
+            limit = 50;
+        }
+
+        if (offset <= 0) {
+            offset = 0;
+        }
+
         // DBL search uses this format: field1: value1 field2: value2
         String searchString = search.entrySet().stream()
                 .map(entry -> entry.getKey() + ": " + entry.getValue())
