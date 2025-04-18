@@ -11,11 +11,8 @@ public class Bot {
     @SerializedName("clientid")
     private String clientId;
     private String username;
-    private String discriminator;
 
     private String avatar;
-    @SerializedName("defAvatar")
-    private String defaultAvatar;
 
     private String prefix;
     private String invite;
@@ -58,10 +55,6 @@ public class Bot {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getDiscriminator() {
-        return discriminator;
     }
 
     public String getAvatar() {
