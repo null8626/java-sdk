@@ -6,7 +6,7 @@ public class User extends SimpleUser {
 
 
     private boolean admin, mod, webMod;
-    private boolean artist, certifiedDev, supporter;
+    private boolean supporter;
 
     private Social social;
 
@@ -26,14 +26,6 @@ public class User extends SimpleUser {
 
     public boolean isWebMod() {
         return webMod;
-    }
-
-    public boolean isArtist() {
-        return artist;
-    }
-
-    public boolean isCertifiedDev() {
-        return certifiedDev;
     }
 
     public boolean isSupporter() {

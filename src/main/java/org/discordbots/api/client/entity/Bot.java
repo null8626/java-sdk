@@ -28,9 +28,6 @@ public class Bot {
     @SerializedName("betadesc")
     private String betaDescription;
 
-    @SerializedName("certifiedBot")
-    private boolean certified;
-
     @SerializedName("date") // rename so that the naming actually makes sense
     private OffsetDateTime approvalTime;
 
@@ -99,10 +96,6 @@ public class Bot {
 
     public String getBetaDescription() {
         return betaDescription;
-    }
-
-    public boolean isCertified() {
-        return certified;
     }
 
     public OffsetDateTime getApprovalTime() {
