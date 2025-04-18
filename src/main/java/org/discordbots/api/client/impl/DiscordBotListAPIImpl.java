@@ -52,14 +52,11 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
                 .build();
     }
 
-    public CompletionStage<Void> setStats(int serverCount) {
-        JSONObject json = new JSONObject()
-                .put("server_count", serverCount);
+    public CompletionStage<Void> setStats(int serverCount) throws IllegalArgumentException {
+        if (serverCount <= 0) {
+            throw new IllegalArgumentException("The provided server count cannot be zero!");
+        }
 
-        return setStats(json);
-    }
-
-    public CompletionStage<Void> setStats(int serverCount) {
         JSONObject json = new JSONObject()
                 .put("server_count", serverCount);
 
@@ -69,27 +66,24 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     private CompletionStage<Void> setStats(JSONObject jsonBody) {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
-                .addPathSegment(botId)
                 .addPathSegment("stats")
                 .build();
 
         return post(url, jsonBody, new EmptyResponseTransformer());
     }
 
-    public CompletionStage<BotStats> getStats(String botId) {
+    public CompletionStage<BotStats> getStats() {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
-                .addPathSegment(botId)
                 .addPathSegment("stats")
                 .build();
 
         return get(url, BotStats.class);
     }
 
-    public CompletionStage<List<SimpleUser>> getVoters(String botId) {
+    public CompletionStage<List<SimpleUser>> getVoters() {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
-                .addPathSegment(botId)
                 .addPathSegment("votes")
                 .build();
 
@@ -147,7 +141,6 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     public CompletionStage<Boolean> hasVoted(String userId) {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
-                .addPathSegment(botId)
                 .addPathSegment("check")
                 .addQueryParameter("userId", userId)
                 .build();

@@ -25,22 +25,15 @@ public class Bot {
     private String longDescription;
     @SerializedName("shortdesc")
     private String shortDescription;
-    @SerializedName("betadesc")
-    private String betaDescription;
 
     @SerializedName("date") // rename so that the naming actually makes sense
-    private OffsetDateTime approvalTime;
+    private OffsetDateTime submissionTime;
 
     @SerializedName("server_count")
-    private long serverCount;
+    private Long serverCount;
 
-    private List<String> guilds;
     private int monthlyPoints;
     private int points;
-
-    private boolean legacy;
-
-
 
     public String getId() {
         return id;
@@ -56,10 +49,6 @@ public class Bot {
 
     public String getAvatar() {
         return avatar;
-    }
-
-    public String getDefaultAvatar() {
-        return defaultAvatar;
     }
 
     public String getPrefix() {
@@ -94,20 +83,12 @@ public class Bot {
         return shortDescription;
     }
 
-    public String getBetaDescription() {
-        return betaDescription;
+    public OffsetDateTime getSubmissionTime() {
+        return submissionTime;
     }
 
-    public OffsetDateTime getApprovalTime() {
-        return approvalTime;
-    }
-
-    public long getServerCount() {
+    public Long getServerCount() {
         return serverCount;
-    }
-
-    public List<String> getGuilds() {
-        return guilds;
     }
 
     public int getMonthlyPoints() {
@@ -116,10 +97,6 @@ public class Bot {
 
     public int getPoints() {
         return points;
-    }
-
-    public boolean isLegacy() {
-        return legacy;
     }
 
 }
