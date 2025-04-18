@@ -41,7 +41,6 @@ public class Bot {
     private long serverCount;
 
     private List<String> guilds;
-    private List<Integer> shards;
     private int monthlyPoints;
     private int points;
 
@@ -123,10 +122,6 @@ public class Bot {
 
     public List<String> getGuilds() {
         return guilds;
-    }
-
-    public List<Integer> getShards() {
-        return shards;
     }
 
     public int getMonthlyPoints() {

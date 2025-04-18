@@ -9,8 +9,6 @@ public class BotStats {
 
     @SerializedName("server_count")
     private int serverCount;
-    private List<Integer> shards;
 
     public int getServerCount() { return serverCount; }
-    public List<Integer> getShards() { return Collections.unmodifiableList(shards); }
 }

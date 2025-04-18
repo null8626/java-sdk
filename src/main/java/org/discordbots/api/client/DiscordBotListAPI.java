@@ -9,8 +9,6 @@ import java.util.concurrent.CompletionStage;
 
 public interface DiscordBotListAPI {
 
-    CompletionStage<Void> setStats(int shardId, int shardTotal, int serverCount);
-    CompletionStage<Void> setStats(List<Integer> shardServerCounts);
     CompletionStage<Void> setStats(int serverCount);
 
     CompletionStage<BotStats> getStats(String botId);

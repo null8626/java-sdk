@@ -52,18 +52,9 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
                 .build();
     }
 
-    public CompletionStage<Void> setStats(int shardId, int shardTotal, int serverCount) {
+    public CompletionStage<Void> setStats(int serverCount) {
         JSONObject json = new JSONObject()
-                .put("shard_id", shardId)
-                .put("shard_count", shardTotal)
                 .put("server_count", serverCount);
-
-        return setStats(json);
-    }
-
-    public CompletionStage<Void> setStats(List<Integer> shardServerCounts) {
-        JSONObject json = new JSONObject()
-                .put("shards", shardServerCounts);
 
         return setStats(json);
     }
