@@ -144,15 +144,6 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         return get(urlBuilder.build(), BotResult.class);
     }
 
-    public CompletionStage<User> getUser(String userId) {
-        HttpUrl url = baseUrl.newBuilder()
-                .addPathSegment("users")
-                .addPathSegment(userId)
-                .build();
-
-        return get(url, User.class);
-    }
-
     public CompletionStage<Boolean> hasVoted(String userId) {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")

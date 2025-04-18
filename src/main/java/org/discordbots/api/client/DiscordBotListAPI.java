@@ -22,8 +22,6 @@ public interface DiscordBotListAPI {
     CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort, List<String> fields);
     CompletionStage<Bot> getBot(String botId);
 
-    CompletionStage<User> getUser(String userId);
-
     CompletionStage<VotingMultiplier> getVotingMultiplier();
 
     class Builder {
