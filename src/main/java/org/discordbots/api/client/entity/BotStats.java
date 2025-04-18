@@ -8,7 +8,7 @@ import java.util.List;
 public class BotStats {
 
     @SerializedName("server_count")
-    private int serverCount;
+    private Long serverCount;
 
-    public int getServerCount() { return serverCount; }
+    public Long getServerCount() { return serverCount; }
 }
