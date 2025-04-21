@@ -192,7 +192,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     private <E> CompletionStage<E> post(HttpUrl url, JSONObject jsonBody, ResponseTransformer<E> responseTransformer) {
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, jsonBody.toString());
+        RequestBody body = RequestBody.create(jsonBody.toString(), mediaType);
 
         Request req = new Request.Builder()
                 .post(body)

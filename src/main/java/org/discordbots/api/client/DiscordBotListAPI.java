@@ -11,10 +11,9 @@ public interface DiscordBotListAPI {
 
     CompletionStage<Void> setStats(int serverCount);
 
-    CompletionStage<BotStats> getStats(String botId);
+    CompletionStage<BotStats> getStats();
 
-    @Deprecated
-    CompletionStage<List<SimpleUser>> getVoters(String botId);
+    CompletionStage<List<SimpleUser>> getVoters(int page);
     CompletionStage<Boolean> hasVoted(String userId);
 
     CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset);
