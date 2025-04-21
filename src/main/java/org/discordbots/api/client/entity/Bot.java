@@ -20,11 +20,15 @@ public class Bot {
     private String vanity;
     private String support;
     private List<String> tags;
+    private List<String> owners;
 
     @SerializedName("longdesc")
     private String longDescription;
     @SerializedName("shortdesc")
     private String shortDescription;
+
+    @SerializedName("github")
+    private String githubRepository;
 
     @SerializedName("date") // rename so that the naming actually makes sense
     private OffsetDateTime submissionTime;
@@ -75,12 +79,20 @@ public class Bot {
         return tags;
     }
 
+    public List<String> getOwners() {
+        return owners;
+    }
+
     public String getLongDescription() {
         return longDescription;
     }
 
     public String getShortDescription() {
         return shortDescription;
+    }
+
+    public String getGithubRepository() {
+        return githubRepository;
     }
 
     public OffsetDateTime getSubmissionTime() {
