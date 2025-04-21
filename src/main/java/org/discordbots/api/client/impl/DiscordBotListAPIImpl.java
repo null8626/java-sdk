@@ -54,7 +54,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     public CompletionStage<Void> setStats(int serverCount) throws IllegalArgumentException {
         if (serverCount <= 0) {
-            throw new IllegalArgumentException("The provided server count cannot be zero!");
+            throw new IllegalArgumentException("The provided server count cannot be less than 1!");
         }
 
         JSONObject json = new JSONObject()
