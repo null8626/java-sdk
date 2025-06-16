@@ -38,6 +38,8 @@ public class Bot {
 
     private int monthlyPoints;
     private int points;
+    
+    private BotReviews reviews;
 
     public String getId() {
         return id;
@@ -111,4 +113,7 @@ public class Bot {
         return points;
     }
 
+    public BotReviews getReviews() {
+        return reviews;
+    }
 }
