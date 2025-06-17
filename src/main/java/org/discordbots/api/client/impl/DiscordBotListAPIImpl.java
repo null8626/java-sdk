@@ -47,6 +47,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
             .scheme("https")
             .host("top.gg")
             .addPathSegment("api")
+            .addPathSegment("v1")
             .build();
 
     private final OkHttpClient httpClient;
