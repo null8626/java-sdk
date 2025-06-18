@@ -7,9 +7,9 @@ First, build a DiscordBotListAPI object.
 
 ```java
 DiscordBotListAPI api = new DiscordBotListAPI.Builder()
-	.token("token")
-	.botId("botId")
-	.build();
+    .token("token")
+    .botId("botId")
+    .build();
 ```
 
 #### Posting stats
@@ -29,10 +29,10 @@ api.setStats(serverCount);
 ```java
 String userId = ...; // ID of the user you're checking
 api.hasVoted(userId).whenComplete((hasVoted, e) -> {
-	if(hasVoted)
-		System.out.println("This person has voted!");
-	else
-		System.out.println("This person has not voted!");
+    if(hasVoted)
+        System.out.println("This person has voted!");
+    else
+        System.out.println("This person has not voted!");
 });
 ```
 
@@ -40,10 +40,10 @@ api.hasVoted(userId).whenComplete((hasVoted, e) -> {
 
 ```java
 api.getVotingMultiplier().whenComplete((multiplier, e) -> {
-	if(multiplier.isWeekend())
-		System.out.println("It's the weekend, so votes are worth 2x!");
-	else
-		System.out.println("It's not the weekend :pensive:");
+    if(multiplier.isWeekend())
+        System.out.println("It's the weekend, so votes are worth 2x!");
+    else
+        System.out.println("It's not the weekend :pensive:");
 });
 ```
 
