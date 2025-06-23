@@ -24,9 +24,12 @@ public interface DiscordBotListAPI {
 
     CompletionStage<BotStats> getStats();
 
+    CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);
     CompletionStage<Boolean> hasVoted(String userId);
 
+    CompletionStage<BotResult> getBots();
+    CompletionStage<BotResult> getBots(int limit);
     CompletionStage<BotResult> getBots(int limit, int offset);
     CompletionStage<BotResult> getBots(int limit, int offset, String sort);
     CompletionStage<BotResult> getBots(int limit, int offset, String sort, List<String> fields);

@@ -168,6 +168,11 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
+    public CompletionStage<List<SimpleUser>> getVoters() {
+        return getVoters(0);
+    }
+    
+    @Override
     public CompletionStage<List<SimpleUser>> getVoters(int page) {
         HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
@@ -194,6 +199,16 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         return get(url, Bot.class);
     }
 
+    @Override
+    public CompletionStage<BotResult> getBots() {
+        return getBots(50, 0, null);
+    }
+    
+    @Override
+    public CompletionStage<BotResult> getBots(int limit) {
+        return getBots(limit, 0, null);
+    }
+    
     @Override
     public CompletionStage<BotResult> getBots(int limit, int offset) {
         return getBots(limit, offset, null);
