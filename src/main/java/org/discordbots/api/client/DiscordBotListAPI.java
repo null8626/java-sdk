@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import org.discordbots.api.client.entity.Bot;
 import org.discordbots.api.client.entity.BotResult;
-import org.discordbots.api.client.entity.BotStats;
 import org.discordbots.api.client.entity.SimpleUser;
 import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.impl.DiscordBotListAPIImpl;
@@ -20,9 +19,9 @@ public interface DiscordBotListAPI {
     
     void stopAutoposter();
 
-    CompletionStage<Void> setStats(int serverCount);
+    CompletionStage<Void> postServerCount(final long serverCount);
 
-    CompletionStage<BotStats> getStats();
+    CompletionStage<Long> getServerCount();
 
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);

@@ -25,6 +25,7 @@ import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
@@ -94,7 +95,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         this.autoposterFuture = this.autoposterScheduler.scheduleAtFixedRate(() -> {
             if (!this.isAutoposterCancelled.get()) {
                 final int serverCount = statsCallback.get();
-                CompletionStage<Void> response = this.setStats(serverCount);
+                final CompletionStage<Void> response = this.postServerCount(serverCount);
 
                 if (postCallback != null) {
                     response.whenComplete((_, error) -> {
@@ -137,44 +138,36 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Void> setStats(int serverCount) throws IllegalArgumentException {
-        if (serverCount <= 0) {
-            throw new IllegalArgumentException("The provided server count cannot be less than 1!");
-        }
-
-        JSONObject json = new JSONObject()
-                .put("server_count", serverCount);
-
-        return setStats(json);
-    }
-
-    private CompletionStage<Void> setStats(JSONObject jsonBody) {
-        HttpUrl url = baseUrl.newBuilder()
+    public CompletionStage<Void> postServerCount(final long serverCount) {
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
                 .build();
-
-        return post(url, jsonBody, new EmptyResponseTransformer());
+        
+        final JSONObject json = new JSONObject()
+                .put("server_count", serverCount);
+        
+        return post(url, json, new EmptyResponseTransformer());
     }
 
     @Override
-    public CompletionStage<BotStats> getStats() {
-        HttpUrl url = baseUrl.newBuilder()
+    public CompletionStage<Long> getServerCount() {
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
                 .build();
 
-        return get(url, BotStats.class);
+        return get(url, BotStats.class).thenApply(stats -> stats.getServerCount());
     }
 
     @Override
     public CompletionStage<List<SimpleUser>> getVoters() {
-        return getVoters(0);
+        return getVoters(1);
     }
     
     @Override
     public CompletionStage<List<SimpleUser>> getVoters(int page) {
-        HttpUrl url = baseUrl.newBuilder()
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment(botId)
                 .addPathSegment("votes")
@@ -191,7 +184,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     @Override
     public CompletionStage<Bot> getBot(String botId) {
-        HttpUrl url = baseUrl.newBuilder()
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment(botId)
                 .build();
@@ -253,7 +246,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     @Override
     public CompletionStage<Boolean> hasVoted(String userId) {
-        HttpUrl url = baseUrl.newBuilder()
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("check")
                 .addQueryParameter("userId", userId)
@@ -274,18 +267,18 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     @Override
     public CompletionStage<VotingMultiplier> getVotingMultiplier() {
-        HttpUrl url = baseUrl.newBuilder()
+        final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("weekend")
                 .build();
 
         return get(url, VotingMultiplier.class);
     }
 
-    private <E> CompletionStage<E> get(HttpUrl url, Class<E> aClass) {
+    private <E> CompletionStage<E> get(final HttpUrl url, Class<E> aClass) {
         return get(url, new DefaultResponseTransformer<>(aClass, gson));
     }
 
-    private <E> CompletionStage<E> get(HttpUrl url, ResponseTransformer<E> responseTransformer) {
+    private <E> CompletionStage<E> get(final HttpUrl url, ResponseTransformer<E> responseTransformer) {
         Request req = new Request.Builder()
                 .get()
                 .url(url)
@@ -297,11 +290,11 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     // The class provided in this is kinda unneeded because the only thing ever given to it
     // is Void, but I wanted to make it expandable (maybe some post methods will return objects
     // in the future)
-    // private <E> CompletionStage<E> post(HttpUrl url, JSONObject jsonBody, Class<E> aClass) {
+    // private <E> CompletionStage<E> post(final HttpUrl url, JSONObject jsonBody, Class<E> aClass) {
     //     return post(url, jsonBody, new DefaultResponseTransformer<>(aClass, gson));
     // }
 
-    private <E> CompletionStage<E> post(HttpUrl url, JSONObject jsonBody, ResponseTransformer<E> responseTransformer) {
+    private <E> CompletionStage<E> post(final HttpUrl url, JSONObject jsonBody, ResponseTransformer<E> responseTransformer) {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(jsonBody.toString(), mediaType);
 
@@ -344,7 +337,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
                                 if (body != null) {
                                     message = (new JSONObject(body)).getString("error");
                                 }
-                            } catch (final Exception ignored) {}
+                            } catch (final JSONException ignored) {}
                         }
 
                         Exception e = new UnsuccessfulHttpException(response.code(), message);
