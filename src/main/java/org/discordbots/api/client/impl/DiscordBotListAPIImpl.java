@@ -25,6 +25,7 @@ import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
@@ -344,7 +345,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
                                 if (body != null) {
                                     message = (new JSONObject(body)).getString("error");
                                 }
-                            } catch (final Exception ignored) {}
+                            } catch (final JSONException ignored) {}
                         }
 
                         Exception e = new UnsuccessfulHttpException(response.code(), message);

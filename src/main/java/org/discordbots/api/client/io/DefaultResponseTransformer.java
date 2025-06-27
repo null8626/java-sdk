@@ -1,9 +1,11 @@
 package org.discordbots.api.client.io;
 
-import com.google.gson.Gson;
-import okhttp3.Response;
-
 import java.io.IOException;
+
+import com.google.gson.Gson;
+
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class DefaultResponseTransformer<E> implements ResponseTransformer<E> {
 
@@ -17,8 +19,13 @@ public class DefaultResponseTransformer<E> implements ResponseTransformer<E> {
 
     @Override
     public E transform(Response response) throws IOException {
-        String body = response.body().string();
-        return gson.fromJson(body, aClass);
+        try (ResponseBody responseBody = response.body()) {
+            if (responseBody != null) {
+                return gson.fromJson(responseBody.charStream(), aClass);
+            }
+        }
+
+        throw new IOException("Unable to parse JSON because of malformed response body.");
     }
 
 }

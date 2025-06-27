@@ -189,3 +189,117 @@ final String widgetUrl = Widget.owner(Widget.Type.DISCORD_BOT, "5746527517457776
 ```java
 final String widgetUrl = Widget.social(Widget.Type.DISCORD_BOT, "574652751745777665");
 ```
+
+### Webhooks
+
+#### Being notified whenever someone voted for your bot
+
+##### Spring Boot
+
+In your `TopggWebhookFilterConfig.java`:
+
+```java
+import org.discordbots.api.client.entity.Vote;
+import org.discordbots.api.client.webhooks.SpringBoot;
+
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class TopggWebhookFilterConfig {
+    @Bean
+    public FilterRegistrationBean<SpringBoot<Vote>> registerVoteWebhook() {
+        final FilterRegistrationBean<SpringBoot<Vote>> registrationBean = new FilterRegistrationBean<>();
+        
+        registrationBean.setFilter(new SpringBoot<>(Vote.class, System.getenv("MY_TOPGG_WEBHOOK_SECRET")) {
+            @Override
+            public void callback(final Vote vote) {
+                System.out.println("A user with the ID of " + vote.getVoterId() + " has voted us on Top.gg!");
+            }
+        });
+        
+        registrationBean.addUrlPatterns("/votes");
+        registrationBean.setOrder(1);
+
+        return registrationBean;
+    }
+}
+```
+
+##### Dropwizard
+
+In your `MyVoteListener.java`:
+
+```java
+import org.discordbots.api.client.entity.Vote;
+import org.discordbots.api.client.webhooks.Dropwizard;
+
+import jakarta.ws.rs.Path;
+
+@Path("/votes")
+public class MyVoteListener extends Dropwizard<Vote> {
+    public MyVoteListener() {
+        super(Vote.class, System.getenv("MY_TOPGG_WEBHOOK_SECRET"));
+    }
+
+    @Override
+    public void callback(final Vote vote) {
+        System.out.println("A user with the ID of " + vote.getVoterId() + " has voted us on Top.gg!");
+    }
+}
+```
+
+In your `MyServer.java`:
+
+```java
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.setup.Environment;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+
+public class MyServer extends Application<Configuration> {
+    public static void main(String[] args) throws Exception {
+        new MyServer().run(args);
+    }
+
+    @Override
+    public void run(Configuration config, Environment env) {
+        final JerseyEnvironment jersey = env.jersey();
+        
+        jersey.register(new MyVoteListener());
+    }
+}
+```
+
+##### Eclipse Jetty
+
+In your `MyServer.java`:
+
+```java
+import org.discordbots.api.client.entity.Vote;
+import org.discordbots.api.client.webhooks.EclipseJetty;
+
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+public class MyServer {
+    public static void main(String[] args) throws Exception {
+        final Server server = new Server(8080);
+        final ServletContextHandler handler = new ServletContextHandler();
+
+        handler.setContextPath("/");
+        handler.addServlet(new ServletHolder(new EclipseJetty<>(Vote.class, System.getenv("MY_TOPGG_WEBHOOK_SECRET")) {
+            @Override
+            public void callback(final Vote vote) {
+                System.out.println("A user with the ID of " + vote.getVoterId() + " has voted us on Top.gg!");
+            }
+        }), "/votes");
+
+        server.setHandler(handler);
+        server.start();
+        server.join();
+    }
+}
+```
