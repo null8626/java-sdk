@@ -1,9 +1,9 @@
-package org.discordbots.api.client.entity;
-
-import com.google.gson.annotations.SerializedName;
+package org.discordbots.api.client.project;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 public class Bot {
 
@@ -39,7 +39,7 @@ public class Bot {
     private int monthlyPoints;
     private int points;
     
-    private BotReviews reviews;
+    private Reviews reviews;
 
     public String getId() {
         return id;
@@ -101,7 +101,7 @@ public class Bot {
         return submissionTime;
     }
 
-    public Long getServerCount() {
+    public Long getBotServerCount() {
         return serverCount;
     }
 
@@ -113,7 +113,7 @@ public class Bot {
         return points;
     }
 
-    public BotReviews getReviews() {
+    public Reviews getReviews() {
         return reviews;
     }
 }

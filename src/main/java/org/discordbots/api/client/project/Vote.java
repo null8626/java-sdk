@@ -1,4 +1,4 @@
-package org.discordbots.api.client.entity;
+package org.discordbots.api.client.project;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

@@ -5,11 +5,11 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import org.discordbots.api.client.entity.Bot;
-import org.discordbots.api.client.entity.BotResult;
-import org.discordbots.api.client.entity.SimpleUser;
-import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.impl.DiscordBotListAPIImpl;
+import org.discordbots.api.client.project.Bot;
+import org.discordbots.api.client.project.BotResult;
+import org.discordbots.api.client.project.SimpleUser;
+import org.discordbots.api.client.project.VotingMultiplier;
 
 public interface DiscordBotListAPI {
     void startAutoposter(int delayInSeconds, Supplier<Integer> statsCallback, BiConsumer<Integer, ? super Throwable> postCallback);
@@ -19,9 +19,9 @@ public interface DiscordBotListAPI {
     
     void stopAutoposter();
 
-    CompletionStage<Void> postServerCount(final long serverCount);
+    CompletionStage<Void> postBotServerCount(final long serverCount);
 
-    CompletionStage<Long> getServerCount();
+    CompletionStage<Long> getBotServerCount();
 
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);

@@ -16,15 +16,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.discordbots.api.client.DiscordBotListAPI;
-import org.discordbots.api.client.entity.Bot;
-import org.discordbots.api.client.entity.BotResult;
-import org.discordbots.api.client.entity.BotStats;
-import org.discordbots.api.client.entity.SimpleUser;
-import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
+import org.discordbots.api.client.project.Bot;
+import org.discordbots.api.client.project.BotResult;
+import org.discordbots.api.client.project.BotStats;
+import org.discordbots.api.client.project.SimpleUser;
+import org.discordbots.api.client.project.VotingMultiplier;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +48,6 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
             .scheme("https")
             .host("top.gg")
             .addPathSegment("api")
-            .addPathSegment("v1")
             .build();
 
     private final OkHttpClient httpClient;
@@ -71,7 +70,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         this.httpClient = new OkHttpClient.Builder()
                 .addInterceptor((chain) -> {
                     Request req = chain.request().newBuilder()
-                            .addHeader("Authorization", this.token)
+                            .addHeader("Authorization", "Bearer " + this.token)
                             .build();
                     return chain.proceed(req);
                 })
@@ -95,7 +94,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         this.autoposterFuture = this.autoposterScheduler.scheduleAtFixedRate(() -> {
             if (!this.isAutoposterCancelled.get()) {
                 final int serverCount = statsCallback.get();
-                final CompletionStage<Void> response = this.postServerCount(serverCount);
+                final CompletionStage<Void> response = this.postBotServerCount(serverCount);
 
                 if (postCallback != null) {
                     response.whenComplete((_, error) -> {
@@ -138,7 +137,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Void> postServerCount(final long serverCount) {
+    public CompletionStage<Void> postBotServerCount(final long serverCount) {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
@@ -151,13 +150,13 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Long> getServerCount() {
+    public CompletionStage<Long> getBotServerCount() {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
                 .build();
 
-        return get(url, BotStats.class).thenApply(stats -> stats.getServerCount());
+        return get(url, BotStats.class).thenApply(stats -> stats.getBotServerCount());
     }
 
     @Override
