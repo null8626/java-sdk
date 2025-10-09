@@ -22,15 +22,17 @@ public interface DiscordBotListAPI {
     
     void stopAutoposter();
 
-    CompletionStage<Void> postServerCount(final long serverCount);
+    CompletionStage<Void> setStats(int shardId, int shardTotal, int serverCount);
+    CompletionStage<Void> setStats(List<Integer> shardServerCounts);
+    CompletionStage<Void> setStats(final long serverCount);
 
     CompletionStage<BotStats> getStats();
     CompletionStage<BotStats> getStats(String botId);
 
+    @Deprecated
     CompletionStage<List<SimpleUser>> getVoters(String botId);
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);
-    CompletionStage<User> getUser(String userId);
     CompletionStage<Boolean> hasVoted(String userId);
 
     CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset);
@@ -41,6 +43,8 @@ public interface DiscordBotListAPI {
     CompletionStage<BotResult> getBots(int limit, int offset, String sort, List<String> fields);
     
     CompletionStage<Bot> getBot(String botId);
+
+    CompletionStage<User> getUser(String userId);
 
     CompletionStage<VotingMultiplier> getVotingMultiplier();
 

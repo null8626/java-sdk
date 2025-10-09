@@ -96,7 +96,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         this.autoposterFuture = this.autoposterScheduler.scheduleAtFixedRate(() -> {
             if (!this.isAutoposterCancelled.get()) {
                 final int serverCount = statsCallback.get();
-                final CompletionStage<Void> response = this.postServerCount(serverCount);
+                final CompletionStage<Void> response = this.setStats(serverCount);
 
                 if (postCallback != null) {
                     response.whenComplete((_, error) -> {
@@ -139,7 +139,19 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Void> postServerCount(final long serverCount) {
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<Void> setStats(int shardId, int shardTotal, int serverCount) {
+        return setStats(serverCount);
+    }
+
+    @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<Void> setStats(List<Integer> shardServerCounts) {
+        return setStats(shardServerCounts.stream().mapToInt(Integer::intValue).sum());
+    }
+
+    @Override
+    public CompletionStage<Void> setStats(final long serverCount) {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
