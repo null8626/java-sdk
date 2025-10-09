@@ -11,7 +11,7 @@ public class Vote {
     private String serverId;
 
     @SerializedName("user")
-    private String voterId;
+    private String userId;
 
     private String type;
 
@@ -20,12 +20,16 @@ public class Vote {
     @SerializedName("isWeekend")
     private boolean weekend;
 
-    public String getReceiverId() {
-        return botId == null ? serverId : botId;
+    public String getBotId() {
+        return botId;
     }
 
-    public String getVoterId() {
-        return voterId;
+    public String getServerId() {
+        return serverId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public String getType() {

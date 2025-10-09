@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executors;
@@ -150,13 +151,25 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Long> getServerCount() {
+    public CompletionStage<BotStats> getStats() {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
                 .build();
 
-        return get(url, BotStats.class).thenApply(stats -> stats.getServerCount());
+        return get(url, BotStats.class);
+    }
+
+    @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<BotStats> getStats(String botId) {
+        return getStats();
+    }
+
+    @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<List<SimpleUser>> getVoters(String botId) {
+        return getVoters();
     }
 
     @Override
@@ -192,13 +205,19 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset) {
+        return getBots(limit, offset);
+    }
+
+    @Override
     public CompletionStage<BotResult> getBots() {
-        return getBots(50, 0, null);
+        return getBots(50);
     }
     
     @Override
     public CompletionStage<BotResult> getBots(int limit) {
-        return getBots(limit, 0, null);
+        return getBots(limit, 0);
     }
     
     @Override

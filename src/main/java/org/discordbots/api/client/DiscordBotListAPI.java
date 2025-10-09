@@ -1,12 +1,14 @@
 package org.discordbots.api.client;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import org.discordbots.api.client.entity.Bot;
 import org.discordbots.api.client.entity.BotResult;
+import org.discordbots.api.client.entity.BotStats;
 import org.discordbots.api.client.entity.SimpleUser;
 import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.impl.DiscordBotListAPIImpl;
@@ -21,12 +23,15 @@ public interface DiscordBotListAPI {
 
     CompletionStage<Void> postServerCount(final long serverCount);
 
-    CompletionStage<Long> getServerCount();
+    CompletionStage<BotStats> getStats();
+    CompletionStage<BotStats> getStats(String botId);
 
+    CompletionStage<List<SimpleUser>> getVoters(String botId);
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);
     CompletionStage<Boolean> hasVoted(String userId);
 
+    CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset);
     CompletionStage<BotResult> getBots();
     CompletionStage<BotResult> getBots(int limit);
     CompletionStage<BotResult> getBots(int limit, int offset);

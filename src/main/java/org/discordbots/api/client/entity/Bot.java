@@ -110,6 +110,11 @@ public class Bot {
         return false;
     }
 
+    @Deprecated(since = "2.2", forRemoval = true)
+    public OffsetDateTime getApprovalTime() {
+        return submissionTime;
+    }
+
     public String getGithubRepository() {
         return githubRepository;
     }
