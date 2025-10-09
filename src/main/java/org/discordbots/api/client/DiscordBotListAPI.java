@@ -10,6 +10,7 @@ import org.discordbots.api.client.entity.Bot;
 import org.discordbots.api.client.entity.BotResult;
 import org.discordbots.api.client.entity.BotStats;
 import org.discordbots.api.client.entity.SimpleUser;
+import org.discordbots.api.client.entity.User;
 import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.impl.DiscordBotListAPIImpl;
 
@@ -29,6 +30,7 @@ public interface DiscordBotListAPI {
     CompletionStage<List<SimpleUser>> getVoters(String botId);
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);
+    CompletionStage<User> getUser(String userId);
     CompletionStage<Boolean> hasVoted(String userId);
 
     CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset);

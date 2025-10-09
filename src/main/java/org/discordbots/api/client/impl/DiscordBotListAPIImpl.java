@@ -21,6 +21,7 @@ import org.discordbots.api.client.entity.Bot;
 import org.discordbots.api.client.entity.BotResult;
 import org.discordbots.api.client.entity.BotStats;
 import org.discordbots.api.client.entity.SimpleUser;
+import org.discordbots.api.client.entity.User;
 import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
@@ -260,6 +261,12 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         }
 
         return get(urlBuilder.build(), BotResult.class);
+    }
+
+    @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<User> getUser(String userId) {
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
