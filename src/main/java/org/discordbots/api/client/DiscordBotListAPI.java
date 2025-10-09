@@ -15,10 +15,10 @@ import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.impl.DiscordBotListAPIImpl;
 
 public interface DiscordBotListAPI {
-    void startAutoposter(int delayInSeconds, Supplier<Integer> statsCallback, BiConsumer<Integer, ? super Throwable> postCallback);
-    void startAutoposter(int delayInSeconds, Supplier<Integer> statsCallback);
-    void startAutoposter(Supplier<Integer> statsCallback, BiConsumer<Integer, ? super Throwable> postCallback);
-    void startAutoposter(Supplier<Integer> statsCallback);
+    void startAutoposter(int delayInSeconds, Supplier<Long> statsCallback, BiConsumer<Long, ? super Throwable> postCallback);
+    void startAutoposter(int delayInSeconds, Supplier<Long> statsCallback);
+    void startAutoposter(Supplier<Long> statsCallback, BiConsumer<Long, ? super Throwable> postCallback);
+    void startAutoposter(Supplier<Long> statsCallback);
     
     void stopAutoposter();
 

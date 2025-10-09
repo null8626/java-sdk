@@ -84,7 +84,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public void startAutoposter(int delayInSeconds, Supplier<Integer> statsCallback, BiConsumer<Integer, ? super Throwable> postCallback) {
+    public void startAutoposter(int delayInSeconds, Supplier<Long> statsCallback, BiConsumer<Long, ? super Throwable> postCallback) {
         if (this.autoposterFuture != null && !this.autoposterFuture.isCancelled()) {
             return;
         }
@@ -95,7 +95,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
         this.autoposterFuture = this.autoposterScheduler.scheduleAtFixedRate(() -> {
             if (!this.isAutoposterCancelled.get()) {
-                final int serverCount = statsCallback.get();
+                final long serverCount = statsCallback.get();
                 final CompletionStage<Void> response = this.setStats(serverCount);
 
                 if (postCallback != null) {
@@ -113,17 +113,17 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public void startAutoposter(int delayInSeconds, Supplier<Integer> statsCallback) {
+    public void startAutoposter(int delayInSeconds, Supplier<Long> statsCallback) {
         this.startAutoposter(delayInSeconds, statsCallback, null);
     }
 
     @Override
-    public void startAutoposter(Supplier<Integer> statsCallback, BiConsumer<Integer, ? super Throwable> postCallback) {
+    public void startAutoposter(Supplier<Long> statsCallback, BiConsumer<Long, ? super Throwable> postCallback) {
         this.startAutoposter(900, statsCallback, postCallback);
     }
 
     @Override
-    public void startAutoposter(Supplier<Integer> statsCallback) {
+    public void startAutoposter(Supplier<Long> statsCallback) {
         this.startAutoposter(900, statsCallback, null);
     }
 
