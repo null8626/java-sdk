@@ -16,15 +16,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.discordbots.api.client.DiscordBotListAPI;
+import org.discordbots.api.client.entity.Bot;
+import org.discordbots.api.client.entity.BotResult;
+import org.discordbots.api.client.entity.BotStats;
+import org.discordbots.api.client.entity.SimpleUser;
+import org.discordbots.api.client.entity.VotingMultiplier;
 import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
-import org.discordbots.api.client.project.Bot;
-import org.discordbots.api.client.project.BotResult;
-import org.discordbots.api.client.project.BotStats;
-import org.discordbots.api.client.project.SimpleUser;
-import org.discordbots.api.client.project.VotingMultiplier;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package org.discordbots.api.client.project;
+package org.discordbots.api.client.entity;
 
 public class Reviews {
     public double averageScore;

@@ -1,4 +1,4 @@
-package org.discordbots.api.client.project;
+package org.discordbots.api.client.entity;
 
 public final class Widget {
     private final static String BASE_URL = "https://top.gg/api/v1";

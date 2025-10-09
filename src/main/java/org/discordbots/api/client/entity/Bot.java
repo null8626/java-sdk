@@ -1,4 +1,4 @@
-package org.discordbots.api.client.project;
+package org.discordbots.api.client.entity;
 
 import java.time.OffsetDateTime;
 import java.util.List;
