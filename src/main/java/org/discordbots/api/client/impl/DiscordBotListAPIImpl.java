@@ -224,6 +224,18 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort) {
+        return getBots(limit, offset, sort);
+    }
+
+    @Override
+    @Deprecated(since = "2.2", forRemoval = true)
+    public CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort, List<String> fields) {
+        return getBots(limit, offset, sort);
+    }
+
+    @Override
     public CompletionStage<BotResult> getBots() {
         return getBots(50);
     }
@@ -240,12 +252,6 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
     @Override
     public CompletionStage<BotResult> getBots(int limit, int offset, String sort) {
-        return getBots(limit, offset, sort, null);
-    }
-
-
-    @Override
-    public CompletionStage<BotResult> getBots(int limit, int offset, String sort, List<String> fields) {
         if (limit > 500) {
             limit = 500;
         } else if (limit <= 0) {
@@ -263,13 +269,6 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
 
         if (sort != null && (sort.equals("monthlyPoints") || sort.equals("id") || sort.equals("date"))) {
             urlBuilder.addQueryParameter("sort", sort);
-        }
-
-        if (fields != null) {
-            String fieldsString = fields.stream()
-                    .collect(Collectors.joining(" "));
-
-            urlBuilder.addQueryParameter("fields", fieldsString);
         }
 
         return get(urlBuilder.build(), BotResult.class);

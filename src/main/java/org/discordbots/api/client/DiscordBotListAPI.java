@@ -36,11 +36,12 @@ public interface DiscordBotListAPI {
     CompletionStage<Boolean> hasVoted(String userId);
 
     CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset);
+    CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort);
+    CompletionStage<BotResult> getBots(Map<String, String> search, int limit, int offset, String sort, List<String> fields);
     CompletionStage<BotResult> getBots();
     CompletionStage<BotResult> getBots(int limit);
     CompletionStage<BotResult> getBots(int limit, int offset);
     CompletionStage<BotResult> getBots(int limit, int offset, String sort);
-    CompletionStage<BotResult> getBots(int limit, int offset, String sort, List<String> fields);
     
     CompletionStage<Bot> getBot(String botId);
 
