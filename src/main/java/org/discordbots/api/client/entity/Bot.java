@@ -1,6 +1,7 @@
 package org.discordbots.api.client.entity;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -53,8 +54,16 @@ public class Bot {
         return username;
     }
 
+    public String getDiscriminator() {
+        return "0";
+    }
+
     public String getAvatar() {
         return avatar;
+    }
+
+    public String getDefaultAvatar() {
+        return "";
     }
 
     public String getPrefix() {
@@ -93,6 +102,14 @@ public class Bot {
         return shortDescription;
     }
 
+    public String getBetaDescription() {
+        return "";
+    }
+
+    public boolean isCertified() {
+        return false;
+    }
+
     public String getGithubRepository() {
         return githubRepository;
     }
@@ -101,8 +118,16 @@ public class Bot {
         return submissionTime;
     }
 
-    public Long getBotServerCount() {
+    public Long getServerCount() {
         return serverCount;
+    }
+
+    public List<String> getGuilds() {
+        return new ArrayList<>();
+    }
+
+    public List<Integer> getShards() {
+        return new ArrayList<>();
     }
 
     public int getMonthlyPoints() {
@@ -111,6 +136,10 @@ public class Bot {
 
     public int getPoints() {
         return points;
+    }
+
+    public boolean isLegacy() {
+        return false;
     }
 
     public Reviews getReviews() {

@@ -94,7 +94,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
         this.autoposterFuture = this.autoposterScheduler.scheduleAtFixedRate(() -> {
             if (!this.isAutoposterCancelled.get()) {
                 final int serverCount = statsCallback.get();
-                final CompletionStage<Void> response = this.postBotServerCount(serverCount);
+                final CompletionStage<Void> response = this.postServerCount(serverCount);
 
                 if (postCallback != null) {
                     response.whenComplete((_, error) -> {
@@ -137,7 +137,7 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Void> postBotServerCount(final long serverCount) {
+    public CompletionStage<Void> postServerCount(final long serverCount) {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
@@ -150,13 +150,13 @@ public class DiscordBotListAPIImpl implements DiscordBotListAPI {
     }
 
     @Override
-    public CompletionStage<Long> getBotServerCount() {
+    public CompletionStage<Long> getServerCount() {
         final HttpUrl url = baseUrl.newBuilder()
                 .addPathSegment("bots")
                 .addPathSegment("stats")
                 .build();
 
-        return get(url, BotStats.class).thenApply(stats -> stats.getBotServerCount());
+        return get(url, BotStats.class).thenApply(stats -> stats.getServerCount());
     }
 
     @Override

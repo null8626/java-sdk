@@ -19,9 +19,9 @@ public interface DiscordBotListAPI {
     
     void stopAutoposter();
 
-    CompletionStage<Void> postBotServerCount(final long serverCount);
+    CompletionStage<Void> postServerCount(final long serverCount);
 
-    CompletionStage<Long> getBotServerCount();
+    CompletionStage<Long> getServerCount();
 
     CompletionStage<List<SimpleUser>> getVoters();
     CompletionStage<List<SimpleUser>> getVoters(int page);
