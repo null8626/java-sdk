@@ -1,7 +1,16 @@
 package org.discordbots.api.client.webhooks;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HexFormat;
+import java.util.stream.Collectors;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -17,41 +26,67 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public abstract class SpringBoot<T> extends OncePerRequestFilter {
     private final Class<T> aClass;
-    private final String authorization;
+    private final byte[] authorization;
     private final Gson gson;
 
     public SpringBoot(final Class<T> aClass, final String authorization) {
         this.aClass = aClass;
-        this.authorization = authorization;
+        this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
         this.gson = new GsonBuilder().create();
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         if (request.getMethod().equalsIgnoreCase("POST")) {
-            final String authorizationHeader = request.getHeader("Authorization");
-            
-            if (authorizationHeader == null || !authorizationHeader.equals(this.authorization)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Unauthorized");
+            final String signatureHeader = request.getHeader("x-topgg-signature");
+
+            if (signatureHeader != null) {
+                try {
+                    final HashMap<String, String> parsedSignature = Arrays.stream(signatureHeader.split(",")).map(part -> part.split("=", 2)).collect(Collectors.toMap(
+                        part -> part[0].trim(),
+                        part -> part[1].trim(),
+                        (existing, replacement) -> replacement,
+                        HashMap::new
+                    ));
+
+                    final String signature = parsedSignature.get("v1");
+                    final String timestamp = parsedSignature.get("t");
+
+                    assert signature != null && timestamp != null;
+
+                    final SecretKeySpec key = new SecretKeySpec(this.authorization, "HmacSHA256");
+                    final Mac hmac = Mac.getInstance("HmacSHA256");
+
+                    hmac.init(key);
+
+                    final String body = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                    final byte[] digest = hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
+
+                    if (!signature.equals(HexFormat.of().formatHex(digest))) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("Invalid Authorization");
+
+                        return;
+                    }
+
+                    callback(gson.fromJson(body, aClass));
+
+                    response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    response.getWriter().write("");
+                } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
+                    if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
+                        throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        response.getWriter().write("Invalid Request");
+                    }
+                }
 
                 return;
             }
-
-            try {
-                callback(gson.fromJson(new InputStreamReader(request.getInputStream()), aClass));
-
-                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                response.getWriter().write("");
-                
-                return;
-            } catch (final JsonSyntaxException | JsonIOException | IOException ignored) {}
-
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Bad request");
-        } else {
-            filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
     }
 
     public abstract void callback(T data);
