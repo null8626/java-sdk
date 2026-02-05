@@ -2,13 +2,11 @@ plugins {
     id "java"
 }
 
-group = 'org.discordbots'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+if (JavaVersion.current() < JavaVersion.VERSION_17) {
+    throw new GradleException("Top.gg's Java SDK requires Java 17 or later. Java ${JavaVersion.current()} is not supported.")
 }
+
+group = 'org.discordbots'
 
 repositories {
     mavenCentral()
@@ -18,11 +16,11 @@ dependencies {
     //Logger
     implementation "org.slf4j:slf4j-api:2.0.17"
 
-    implementation "org.json:json:20250517"
-    implementation "com.squareup.okhttp3:okhttp:5.2.0"
+    implementation "org.json:json:20251224"
+    implementation "com.squareup.okhttp3:okhttp:5.3.2"
     implementation "com.google.code.gson:gson:2.13.2"
     implementation "com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2"
-    implementation "org.springframework.boot:spring-boot-starter-web:3.5.6"
+    implementation "org.springframework.boot:spring-boot-starter-web:4.0.2"
     implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
     implementation "jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"
 }
