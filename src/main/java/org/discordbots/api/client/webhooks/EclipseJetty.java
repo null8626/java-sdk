@@ -22,15 +22,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public abstract class EclipseJetty<T> extends HttpServlet {
-    private final Class<T> aClass;
+public class EclipseJetty extends HttpServlet {
     private final byte[] authorization;
     private final Gson gson;
+    private final EclipseJetty.Listener listener;
 
-    public EclipseJetty(final Class<T> aClass, final String authorization) {
-        this.aClass = aClass;
+    public EclipseJetty(final String authorization, final EclipseJetty.Listener listener) {
         this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
         this.gson = new GsonBuilder().create();
+        this.listener = listener;
     }
 
     @Override
@@ -67,7 +67,15 @@ public abstract class EclipseJetty<T> extends HttpServlet {
                 return;
             }
 
-            callback(gson.fromJson(body, aClass), request.getHeader("x-topgg-trace"), response);
+            final Payload payload = gson.fromJson(body, Payload.class);
+            final String trace = request.getHeader("x-topgg-trace");
+
+            switch (payload.getType()) {
+                case "integration.create" -> listener.onIntegrationCreate(response, payload.getData(gson, IntegrationCreatePayload.class), trace);
+                case "integration.delete" -> listener.onIntegrationDelete(response, payload.getData(gson, IntegrationDeletePayload.class), trace);
+                case "webhook.test" -> listener.onTest(response, payload.getData(gson, TestPayload.class), trace);
+                case "vote.create" -> listener.onVoteCreate(response, payload.getData(gson, VoteCreatePayload.class), trace);
+            }
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
                 throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
@@ -78,5 +86,21 @@ public abstract class EclipseJetty<T> extends HttpServlet {
         }
     }
 
-    public abstract void callback(T data, String trace, HttpServletResponse response);
+    public interface Listener {
+        default void onIntegrationCreate(HttpServletResponse response, IntegrationCreatePayload payload, String trace) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+
+        default void onIntegrationDelete(HttpServletResponse response, IntegrationDeletePayload payload, String trace) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+
+        default void onTest(HttpServletResponse response, TestPayload payload, String trace) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+
+        default void onVoteCreate(HttpServletResponse response, VoteCreatePayload payload, String trace) {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
+    }
 }

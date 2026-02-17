@@ -23,15 +23,15 @@ import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 
-public abstract class Dropwizard<T> {
-    private final Class<T> aClass;
+public class Dropwizard {
     private final byte[] authorization;
     private final Gson gson;
+    private final Dropwizard.Listener listener;
 
-    public Dropwizard(final Class<T> aClass, final String authorization) {
-        this.aClass = aClass;
+    public Dropwizard(final String authorization, final Dropwizard.Listener listener) {
         this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
         this.gson = new GsonBuilder().create();
+        this.listener = listener;
     }
 
     @POST
@@ -65,7 +65,16 @@ public abstract class Dropwizard<T> {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid Authorization").build();
             }
 
-            return callback(gson.fromJson(body, aClass), request.getHeader("x-topgg-trace"));
+            final Payload payload = gson.fromJson(body, Payload.class);
+            final String trace = request.getHeader("x-topgg-trace");
+
+            return switch (payload.getType()) {
+                case "integration.create" -> listener.onIntegrationCreate(payload.getData(gson, IntegrationCreatePayload.class), trace);
+                case "integration.delete" -> listener.onIntegrationDelete(payload.getData(gson, IntegrationDeletePayload.class), trace);
+                case "webhook.test" -> listener.onTest(payload.getData(gson, TestPayload.class), trace);
+                case "vote.create" -> listener.onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
+                default -> Response.status(Response.Status.BAD_REQUEST).entity("Invalid Request").build();
+            };
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
                 throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);
@@ -75,5 +84,21 @@ public abstract class Dropwizard<T> {
         }
     }
 
-    public abstract Response callback(T data, String trace);
+    public interface Listener {
+        default Response onIntegrationCreate(IntegrationCreatePayload payload, String trace) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        default Response onIntegrationDelete(IntegrationDeletePayload payload, String trace) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        default Response onTest(TestPayload payload, String trace) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+
+        default Response onVoteCreate(VoteCreatePayload payload, String trace) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        }
+    }
 }
