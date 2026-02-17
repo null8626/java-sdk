@@ -67,10 +67,7 @@ public abstract class EclipseJetty<T> extends HttpServlet {
                 return;
             }
 
-            callback(gson.fromJson(body, aClass));
-
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            response.getWriter().write("");
+            callback(gson.fromJson(body, aClass), request.getHeader("x-topgg-trace"), response);
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
                 throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
@@ -81,5 +78,5 @@ public abstract class EclipseJetty<T> extends HttpServlet {
         }
     }
 
-    public abstract void callback(T data);
+    public abstract void callback(T data, String trace, HttpServletResponse response);
 }

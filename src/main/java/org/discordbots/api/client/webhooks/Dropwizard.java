@@ -65,9 +65,7 @@ public abstract class Dropwizard<T> {
                 return Response.status(Response.Status.UNAUTHORIZED).entity("Invalid Authorization").build();
             }
 
-            callback(gson.fromJson(body, aClass));
-
-            return Response.noContent().build();
+            return callback(gson.fromJson(body, aClass), request.getHeader("x-topgg-trace"));
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
                 throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);
@@ -77,5 +75,5 @@ public abstract class Dropwizard<T> {
         }
     }
 
-    public abstract void callback(T data);
+    public abstract Response callback(T data, String trace);
 }
