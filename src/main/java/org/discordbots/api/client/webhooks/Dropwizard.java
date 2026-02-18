@@ -68,13 +68,17 @@ public class Dropwizard {
             final Payload payload = gson.fromJson(body, Payload.class);
             final String trace = request.getHeader("x-topgg-trace");
 
-            return switch (payload.getType()) {
-                case "integration.create" -> listener.onIntegrationCreate(payload.getData(gson, IntegrationCreatePayload.class), trace);
-                case "integration.delete" -> listener.onIntegrationDelete(payload.getData(gson, IntegrationDeletePayload.class), trace);
-                case "webhook.test" -> listener.onTest(payload.getData(gson, TestPayload.class), trace);
-                case "vote.create" -> listener.onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
-                default -> Response.status(Response.Status.BAD_REQUEST).entity("Invalid Request").build();
-            };
+            try {
+                return switch (payload.getType()) {
+                    case "integration.create" -> listener.onIntegrationCreate(payload.getData(gson, IntegrationCreatePayload.class), trace);
+                    case "integration.delete" -> listener.onIntegrationDelete(payload.getData(gson, IntegrationDeletePayload.class), trace);
+                    case "webhook.test" -> listener.onTest(payload.getData(gson, TestPayload.class), trace);
+                    case "vote.create" -> listener.onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
+                    default -> Response.status(Response.Status.BAD_REQUEST).entity("Invalid Request").build();
+                };
+            } catch (Throwable ignored) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error").build();
+            }
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
                 throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);

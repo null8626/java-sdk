@@ -70,11 +70,16 @@ public class EclipseJetty extends HttpServlet {
             final Payload payload = gson.fromJson(body, Payload.class);
             final String trace = request.getHeader("x-topgg-trace");
 
-            switch (payload.getType()) {
-                case "integration.create" -> listener.onIntegrationCreate(response, payload.getData(gson, IntegrationCreatePayload.class), trace);
-                case "integration.delete" -> listener.onIntegrationDelete(response, payload.getData(gson, IntegrationDeletePayload.class), trace);
-                case "webhook.test" -> listener.onTest(response, payload.getData(gson, TestPayload.class), trace);
-                case "vote.create" -> listener.onVoteCreate(response, payload.getData(gson, VoteCreatePayload.class), trace);
+            try {
+                switch (payload.getType()) {
+                    case "integration.create" -> listener.onIntegrationCreate(response, payload.getData(gson, IntegrationCreatePayload.class), trace);
+                    case "integration.delete" -> listener.onIntegrationDelete(response, payload.getData(gson, IntegrationDeletePayload.class), trace);
+                    case "webhook.test" -> listener.onTest(response, payload.getData(gson, TestPayload.class), trace);
+                    case "vote.create" -> listener.onVoteCreate(response, payload.getData(gson, VoteCreatePayload.class), trace);
+                }
+            } catch (Throwable ignored) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Internal Server Error");
             }
         } catch (final NoSuchAlgorithmException | InvalidKeyException | ArrayIndexOutOfBoundsException | AssertionError | JsonSyntaxException | JsonIOException | IOException error) {
             if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
