@@ -1,5 +1,15 @@
 package org.discordbots.webhooks.dropwizard;
 
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -9,27 +19,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.stream.Collectors;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.discordbots.webhooks.IntegrationCreatePayload;
 import org.discordbots.webhooks.IntegrationDeletePayload;
 import org.discordbots.webhooks.Payload;
 import org.discordbots.webhooks.TestPayload;
 import org.discordbots.webhooks.VoteCreatePayload;
-
-import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.Response;
 
 public class DropwizardWebhooks {
   private final byte[] authorization;

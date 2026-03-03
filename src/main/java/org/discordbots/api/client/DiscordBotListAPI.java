@@ -25,6 +25,8 @@ import org.discordbots.api.client.entity.UserSource;
 import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.PaginatedVotesConverter;
+import org.discordbots.api.client.io.PostCommands;
+import org.discordbots.api.client.io.RawPostCommandsTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
 
@@ -71,7 +73,7 @@ public class DiscordBotListAPI {
     return get(url, Project.class);
   }
 
-  public <C> CompletionStage<Void> postCommands(final JsonArray commands) {
+  public CompletionStage<Void> postCommands(final PostCommands commands) {
     final HttpUrl url =
         baseUrl
             .newBuilder()
@@ -80,7 +82,11 @@ public class DiscordBotListAPI {
             .addPathSegment("commands")
             .build();
 
-    return post(url, commands, new EmptyResponseTransformer());
+    return post(url, commands.toJsonString(), new EmptyResponseTransformer());
+  }
+
+  public CompletionStage<Void> postCommands(final JsonArray commands) {
+    return postCommands(new RawPostCommandsTransformer(commands));
   }
 
   public CompletionStage<PartialVote> getVote(final UserSource userSource, final String id) {
@@ -142,11 +148,8 @@ public class DiscordBotListAPI {
   }
 
   private <E> CompletionStage<E> post(
-      final HttpUrl url,
-      final JsonArray jsonBody,
-      final ResponseTransformer<E> responseTransformer) {
-    final RequestBody body =
-        RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
+      final HttpUrl url, final String jsonBody, final ResponseTransformer<E> responseTransformer) {
+    final RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
     final Request req = new Request.Builder().post(body).url(url).build();
 
     return execute(req, responseTransformer);

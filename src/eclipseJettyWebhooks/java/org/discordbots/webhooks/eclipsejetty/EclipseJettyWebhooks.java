@@ -1,5 +1,14 @@
 package org.discordbots.webhooks.eclipsejetty;
 
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -9,26 +18,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.stream.Collectors;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.discordbots.webhooks.IntegrationCreatePayload;
 import org.discordbots.webhooks.IntegrationDeletePayload;
 import org.discordbots.webhooks.Payload;
 import org.discordbots.webhooks.TestPayload;
 import org.discordbots.webhooks.VoteCreatePayload;
-
-import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 public class EclipseJettyWebhooks extends HttpServlet {
   private final byte[] authorization;
