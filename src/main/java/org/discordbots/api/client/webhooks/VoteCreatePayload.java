@@ -9,7 +9,7 @@ public class VoteCreatePayload {
 
   private int weight;
 
-  @SerializedName("voted_at")
+  @SerializedName("created_at")
   private OffsetDateTime votedAt;
 
   @SerializedName("expires_at")
