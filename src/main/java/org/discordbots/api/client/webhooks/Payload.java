@@ -13,7 +13,7 @@ class Payload {
     return type;
   }
 
-  public<T> T getData(Gson gson, Class<T> cls) throws JsonSyntaxException {
+  public <T> T getData(Gson gson, Class<T> cls) throws JsonSyntaxException {
     return gson.fromJson(data, cls);
   }
 }

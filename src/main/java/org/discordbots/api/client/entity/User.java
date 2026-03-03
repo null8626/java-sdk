@@ -2,48 +2,29 @@ package org.discordbots.api.client.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class User extends SimpleUser {
+public class User {
+  private String id;
+  private String name;
 
-    @SerializedName("defAvatar")
-    private String defaultAvatar;
+  @SerializedName("avatar_url")
+  private String avatar;
 
-    private boolean admin, mod, webMod;
-    private boolean artist, certifiedDev, supporter;
+  @SerializedName("platform_id")
+  private String platformId;
 
-    private Social social;
+  public String getId() {
+    return id;
+  }
 
+  public String getName() {
+    return name;
+  }
 
+  public String getAvatar() {
+    return avatar;
+  }
 
-    public String getDefaultAvatar() {
-        return defaultAvatar;
-    }
-
-    public boolean isAdmin() {
-        return admin;
-    }
-
-    public boolean isMod() {
-        return mod;
-    }
-
-    public boolean isWebMod() {
-        return webMod;
-    }
-
-    public boolean isArtist() {
-        return artist;
-    }
-
-    public boolean isCertifiedDev() {
-        return certifiedDev;
-    }
-
-    public boolean isSupporter() {
-        return supporter;
-    }
-
-    public Social getSocial() {
-        return social;
-    }
-
+  public String getPlatformId() {
+    return platformId;
+  }
 }

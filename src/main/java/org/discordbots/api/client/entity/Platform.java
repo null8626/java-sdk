@@ -1,4 +1,4 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.api.client.entity;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,8 +1,7 @@
 package org.discordbots.api.client.webhooks;
 
-import java.time.OffsetDateTime;
-
 import com.google.gson.annotations.SerializedName;
+import java.time.OffsetDateTime;
 
 public class VoteCreatePayload {
   private String id;
