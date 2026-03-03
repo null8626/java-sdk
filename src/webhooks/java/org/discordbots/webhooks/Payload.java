@@ -1,10 +1,10 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-class Payload {
+public class Payload {
   private String type;
 
   private JsonObject data;

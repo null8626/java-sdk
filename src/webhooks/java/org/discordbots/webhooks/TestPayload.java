@@ -1,4 +1,4 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks;
 
 public class TestPayload {
   private PartialProject project;

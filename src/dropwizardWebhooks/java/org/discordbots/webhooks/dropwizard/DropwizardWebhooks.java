@@ -1,33 +1,48 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks.dropwizard;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HexFormat;
+import java.util.stream.Collectors;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.discordbots.webhooks.IntegrationCreatePayload;
+import org.discordbots.webhooks.IntegrationDeletePayload;
+import org.discordbots.webhooks.Payload;
+import org.discordbots.webhooks.TestPayload;
+import org.discordbots.webhooks.VoteCreatePayload;
+
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HexFormat;
-import java.util.stream.Collectors;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
-public class Dropwizard {
+public class DropwizardWebhooks {
   private final byte[] authorization;
   private final Gson gson;
-  private final Dropwizard.Listener listener;
+  private final DropwizardWebhooks.Listener listener;
 
-  public Dropwizard(final String authorization, final Dropwizard.Listener listener) {
+  public DropwizardWebhooks(
+      final String authorization, final DropwizardWebhooks.Listener listener) {
     this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
-    this.gson = new GsonBuilder().create();
+    this.gson =
+        new GsonBuilder()
+            .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
+            .create();
     this.listener = listener;
   }
 
@@ -83,7 +98,7 @@ public class Dropwizard {
           case "webhook.test" -> listener.onTest(payload.getData(gson, TestPayload.class), trace);
           case "vote.create" ->
               listener.onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
-          default -> Response.status(Response.Status.BAD_REQUEST).entity("Invalid Request").build();
+          default -> Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
         };
       } catch (Throwable ignored) {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -100,7 +115,7 @@ public class Dropwizard {
       if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
         throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);
       } else {
-        return Response.status(Response.Status.BAD_REQUEST).entity("Invalid Request").build();
+        return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
       }
     }
   }

@@ -1,33 +1,48 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks.springboot;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.stream.Collectors;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.discordbots.webhooks.IntegrationCreatePayload;
+import org.discordbots.webhooks.IntegrationDeletePayload;
+import org.discordbots.webhooks.Payload;
+import org.discordbots.webhooks.TestPayload;
+import org.discordbots.webhooks.VoteCreatePayload;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class SpringBoot extends OncePerRequestFilter {
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class SpringBootWebhooks extends OncePerRequestFilter {
   private final byte[] authorization;
   private final Gson gson;
-  private final SpringBoot.Listener listener;
+  private final SpringBootWebhooks.Listener listener;
 
-  public SpringBoot(final String authorization, final SpringBoot.Listener listener) {
+  public SpringBootWebhooks(
+      final String authorization, final SpringBootWebhooks.Listener listener) {
     this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
-    this.gson = new GsonBuilder().create();
+    this.gson =
+        new GsonBuilder()
+            .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
+            .create();
     this.listener = listener;
   }
 
@@ -105,7 +120,7 @@ public class SpringBoot extends OncePerRequestFilter {
             throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
           } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("Invalid Request");
+            response.getWriter().write("Bad Request");
           }
         }
 

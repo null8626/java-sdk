@@ -1,4 +1,4 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks;
 
 import com.google.gson.annotations.SerializedName;
 import java.time.OffsetDateTime;

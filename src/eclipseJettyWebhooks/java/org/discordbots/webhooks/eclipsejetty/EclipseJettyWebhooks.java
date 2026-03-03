@@ -1,32 +1,47 @@
-package org.discordbots.api.client.webhooks;
+package org.discordbots.webhooks.eclipsejetty;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.stream.Collectors;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-public class EclipseJetty extends HttpServlet {
+import org.discordbots.webhooks.IntegrationCreatePayload;
+import org.discordbots.webhooks.IntegrationDeletePayload;
+import org.discordbots.webhooks.Payload;
+import org.discordbots.webhooks.TestPayload;
+import org.discordbots.webhooks.VoteCreatePayload;
+
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+public class EclipseJettyWebhooks extends HttpServlet {
   private final byte[] authorization;
   private final Gson gson;
-  private final EclipseJetty.Listener listener;
+  private final EclipseJettyWebhooks.Listener listener;
 
-  public EclipseJetty(final String authorization, final EclipseJetty.Listener listener) {
+  public EclipseJettyWebhooks(
+      final String authorization, final EclipseJettyWebhooks.Listener listener) {
     this.authorization = authorization.getBytes(StandardCharsets.UTF_8);
-    this.gson = new GsonBuilder().create();
+    this.gson =
+        new GsonBuilder()
+            .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
+            .create();
     this.listener = listener;
   }
 
@@ -102,7 +117,7 @@ public class EclipseJetty extends HttpServlet {
         throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
       } else {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.getWriter().write("Invalid Request");
+        response.getWriter().write("Bad Request");
       }
     }
   }

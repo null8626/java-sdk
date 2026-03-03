@@ -15,21 +15,42 @@ repositories {
   mavenCentral()
 }
 
+sourceSets {
+  webhooks
+  dropwizardWebhooks
+  eclipseJettyWebhooks
+  springBootWebhooks
+}
+
 configurations {
+  dropwizardWebhooksImplementation.extendsFrom(webhooksImplementation)
+  eclipseJettyWebhooksImplementation.extendsFrom(webhooksImplementation)
+  springBootWebhooksImplementation.extendsFrom(webhooksImplementation)
+
   googleJavaFormat
 }
 
 dependencies {
-  //Logger
   implementation 'org.slf4j:slf4j-api:2.0.17'
 
   implementation 'org.json:json:20251224'
   implementation 'com.squareup.okhttp3:okhttp:5.3.2'
   implementation 'com.google.code.gson:gson:2.13.2'
   implementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
-  implementation 'org.springframework.boot:spring-boot-starter-web:4.0.3'
-  implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
-  implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+
+  webhooksImplementation 'com.google.code.gson:gson:2.13.2'
+  webhooksImplementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
+
+  dropwizardWebhooksImplementation sourceSets.webhooks.output
+  dropwizardWebhooksImplementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+  dropwizardWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+  eclipseJettyWebhooksImplementation sourceSets.webhooks.output
+  eclipseJettyWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+  springBootWebhooksImplementation sourceSets.webhooks.output
+  springBootWebhooksImplementation 'org.springframework.boot:spring-boot-starter-web:4.0.3'
+  springBootWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
   googleJavaFormat 'com.google.googlejavaformat:google-java-format:1.34.1'
 }
