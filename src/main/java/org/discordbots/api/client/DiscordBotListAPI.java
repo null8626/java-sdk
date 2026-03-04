@@ -25,7 +25,7 @@ import org.discordbots.api.client.entity.UserSource;
 import org.discordbots.api.client.io.DefaultResponseTransformer;
 import org.discordbots.api.client.io.EmptyResponseTransformer;
 import org.discordbots.api.client.io.PaginatedVotesConverter;
-import org.discordbots.api.client.io.PostCommands;
+import org.discordbots.api.client.io.PostCommandsTransformer;
 import org.discordbots.api.client.io.RawPostCommandsTransformer;
 import org.discordbots.api.client.io.ResponseTransformer;
 import org.discordbots.api.client.io.UnsuccessfulHttpException;
@@ -73,7 +73,7 @@ public class DiscordBotListAPI {
     return get(url, Project.class);
   }
 
-  public CompletionStage<Void> postCommands(final PostCommands commands) {
+  public CompletionStage<Void> postCommands(final PostCommandsTransformer commands) {
     final HttpUrl url =
         baseUrl
             .newBuilder()
@@ -82,7 +82,9 @@ public class DiscordBotListAPI {
             .addPathSegment("commands")
             .build();
 
-    return post(url, commands.toJsonString(), new EmptyResponseTransformer());
+    return commands
+        .toJsonString()
+        .thenCompose(jsonBody -> post(url, jsonBody, new EmptyResponseTransformer()));
   }
 
   public CompletionStage<Void> postCommands(final JsonArray commands) {

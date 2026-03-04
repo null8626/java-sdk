@@ -16,6 +16,9 @@ repositories {
 }
 
 sourceSets {
+  jdaWrapper
+  discord4jWrapper
+
   webhooks
   dropwizardWebhooks
   eclipseJettyWebhooks
@@ -37,6 +40,16 @@ dependencies {
   implementation 'com.squareup.okhttp3:okhttp:5.3.2'
   implementation 'com.google.code.gson:gson:2.13.2'
   implementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
+
+  jdaWrapperImplementation sourceSets.main.output
+  jdaWrapperImplementation 'com.google.code.gson:gson:2.13.2'
+  jdaWrapperImplementation('net.dv8tion:JDA:6.3.1') {
+    exclude module: 'opus-java'
+    exclude module: 'tink' 
+  }
+
+  discord4jWrapperImplementation sourceSets.main.output
+  discord4jWrapperImplementation 'com.discord4j:discord4j-core:3.3.1'
 
   webhooksImplementation 'com.google.code.gson:gson:2.13.2'
   webhooksImplementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'

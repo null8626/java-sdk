@@ -1,8 +1,10 @@
 package org.discordbots.api.client.io;
 
 import com.google.gson.JsonArray;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
-public class RawPostCommandsTransformer implements PostCommands {
+public class RawPostCommandsTransformer implements PostCommandsTransformer {
   private final JsonArray object;
 
   public RawPostCommandsTransformer(final JsonArray object) {
@@ -10,7 +12,7 @@ public class RawPostCommandsTransformer implements PostCommands {
   }
 
   @Override
-  public String toJsonString() {
-    return this.object.toString();
+  public CompletionStage<String> toJsonString() {
+    return CompletableFuture.completedFuture(object.toString());
   }
 }
