@@ -15,6 +15,8 @@ import org.discordbots.api.interceptors.GetVotesInterceptor;
 import org.discordbots.api.interceptors.PostCommandsInterceptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public class DiscordBotListAPITest {
   private DiscordBotListAPI client;
@@ -48,10 +50,10 @@ public class DiscordBotListAPITest {
     this.client.postCommands(commands).toCompletableFuture().join();
   }
 
-  @Test
-  public void getVote() {
-    this.client.getVote(UserSource.DISCORD, "123456").toCompletableFuture().join();
-    this.client.getVote(UserSource.TOPGG, "123456").toCompletableFuture().join();
+  @ParameterizedTest
+  @EnumSource(UserSource.class)
+  public void getVote(final UserSource userSource) {
+    this.client.getVote(userSource, "123456").toCompletableFuture().join();
   }
 
   @Test

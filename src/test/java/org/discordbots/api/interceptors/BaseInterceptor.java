@@ -17,13 +17,14 @@ public abstract class BaseInterceptor implements Interceptor {
 
   public BaseInterceptor() {
     try {
+      final String className = getClass().getSimpleName();
+
       final InputStream inputStream =
-          getClass()
-              .getClassLoader()
-              .getResourceAsStream(getClass().getSimpleName().substring(0, -11) + "Response.json");
+          BaseInterceptor.class.getResourceAsStream(
+              "/" + className.substring(0, className.length() - 11) + "Response.json");
 
       this.response = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-    } catch (final IOException ignored) {
+    } catch (final IOException | NullPointerException ignored) {
       this.response = "";
     }
   }
@@ -38,16 +39,12 @@ public abstract class BaseInterceptor implements Interceptor {
   public Response intercept(Chain chain) throws IOException {
     final Request request = chain.request();
 
-    final String method = request.method();
     final HttpUrl url = request.url();
     final String path = String.join("/", url.pathSegments());
-    final String authorization = request.header("Authorization");
 
     if (url.host().equals("top.gg")
         && path.startsWith("api/v1")
-        && authorization != null
-        && authorization.startsWith("Bearer ")
-        && isCorrect(method, path, url)) {
+        && isCorrect(request.method(), path, url)) {
       return new Response.Builder()
           .request(request)
           .protocol(Protocol.HTTP_1_1)
