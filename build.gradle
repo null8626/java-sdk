@@ -32,6 +32,11 @@ configurations {
   eclipseJettyWebhooksImplementation.extendsFrom webhooksImplementation
   springBootWebhooksImplementation.extendsFrom webhooksImplementation
 
+
+  testImplementation.extendsFrom dropwizardWebhooksImplementation
+  testImplementation.extendsFrom eclipseJettyWebhooksImplementation
+  testImplementation.extendsFrom springBootWebhooksImplementation
+
   googleJavaFormat
 }
 
@@ -179,6 +184,7 @@ dependencies {
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.3'
   testImplementation 'com.google.code.gson:gson:2.13.2'
+  testImplementation 'io.dropwizard:dropwizard-testing:5.0.1'
 
   testImplementation sourceSets.dropwizardWebhooks.output
   testImplementation sourceSets.eclipseJettyWebhooks.output

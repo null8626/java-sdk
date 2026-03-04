@@ -8,20 +8,26 @@ import org.discordbots.webhooks.payload.VoteCreatePayload;
 
 public interface DBLWebhooksListener {
   default void onIntegrationCreate(
-      HttpServletResponse response, IntegrationCreatePayload payload, String trace) {
+      final HttpServletResponse response,
+      final IntegrationCreatePayload payload,
+      final String trace) {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }
 
   default void onIntegrationDelete(
-      HttpServletResponse response, IntegrationDeletePayload payload, String trace) {
+      final HttpServletResponse response,
+      final IntegrationDeletePayload payload,
+      final String trace) {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }
 
-  default void onTest(HttpServletResponse response, TestPayload payload, String trace) {
+  default void onTest(
+      final HttpServletResponse response, final TestPayload payload, final String trace) {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }
 
-  default void onVoteCreate(HttpServletResponse response, VoteCreatePayload payload, String trace) {
+  default void onVoteCreate(
+      final HttpServletResponse response, final VoteCreatePayload payload, final String trace) {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);
   }
 }

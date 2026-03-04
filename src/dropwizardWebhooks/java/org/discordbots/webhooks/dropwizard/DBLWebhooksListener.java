@@ -7,19 +7,19 @@ import org.discordbots.webhooks.payload.TestPayload;
 import org.discordbots.webhooks.payload.VoteCreatePayload;
 
 public interface DBLWebhooksListener {
-  default Response onIntegrationCreate(IntegrationCreatePayload payload, String trace) {
+  default Response onIntegrationCreate(final IntegrationCreatePayload payload, final String trace) {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
-  default Response onIntegrationDelete(IntegrationDeletePayload payload, String trace) {
+  default Response onIntegrationDelete(final IntegrationDeletePayload payload, final String trace) {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
-  default Response onTest(TestPayload payload, String trace) {
+  default Response onTest(final TestPayload payload, final String trace) {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 
-  default Response onVoteCreate(VoteCreatePayload payload, String trace) {
+  default Response onVoteCreate(final VoteCreatePayload payload, final String trace) {
     return Response.status(Response.Status.NO_CONTENT).build();
   }
 }

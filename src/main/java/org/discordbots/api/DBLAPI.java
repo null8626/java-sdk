@@ -32,7 +32,7 @@ import org.discordbots.api.io.ResponseTransformer;
 import org.discordbots.api.io.UnsuccessfulHttpException;
 
 public class DBLAPI {
-  private static final HttpUrl baseUrl =
+  private static final HttpUrl BASE_URL =
       new HttpUrl.Builder()
           .scheme("https")
           .host("top.gg")
@@ -69,14 +69,14 @@ public class DBLAPI {
 
   public CompletionStage<Project> getSelf() {
     final HttpUrl url =
-        baseUrl.newBuilder().addPathSegment("projects").addPathSegment("@me").build();
+        BASE_URL.newBuilder().addPathSegment("projects").addPathSegment("@me").build();
 
     return get(url, Project.class);
   }
 
   public CompletionStage<Void> postCommands(final PostCommandsTransformer commands) {
     final HttpUrl url =
-        baseUrl
+        BASE_URL
             .newBuilder()
             .addPathSegment("projects")
             .addPathSegment("@me")
@@ -94,7 +94,7 @@ public class DBLAPI {
 
   public CompletionStage<PartialVote> getVote(final UserSource userSource, final String id) {
     final HttpUrl url =
-        baseUrl
+        BASE_URL
             .newBuilder()
             .addPathSegment("projects")
             .addPathSegment("@me")
@@ -117,7 +117,7 @@ public class DBLAPI {
 
   public CompletionStage<PaginatedVotes> getVotes(final TemporalAccessor since) {
     final HttpUrl url =
-        baseUrl
+        BASE_URL
             .newBuilder()
             .addPathSegment("projects")
             .addPathSegment("@me")
@@ -130,7 +130,7 @@ public class DBLAPI {
 
   public CompletionStage<PaginatedVotes> getVotes(final String cursor) {
     final HttpUrl url =
-        baseUrl
+        BASE_URL
             .newBuilder()
             .addPathSegment("projects")
             .addPathSegment("@me")

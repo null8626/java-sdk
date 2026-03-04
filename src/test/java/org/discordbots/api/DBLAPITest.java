@@ -13,17 +13,17 @@ import org.discordbots.api.interceptors.GetSelfInterceptor;
 import org.discordbots.api.interceptors.GetVoteInterceptor;
 import org.discordbots.api.interceptors.GetVotesInterceptor;
 import org.discordbots.api.interceptors.PostCommandsInterceptor;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 public class DBLAPITest {
-  private DBLAPI client;
+  private static DBLAPI CLIENT;
 
-  @BeforeEach
-  public void initiate() {
-    this.client =
+  @BeforeAll
+  public static void setup() {
+    CLIENT =
         new DBLAPI(
             new OkHttpClient.Builder()
                 .addInterceptor(new GetSelfInterceptor())
@@ -35,7 +35,7 @@ public class DBLAPITest {
 
   @Test
   public void getSelf() {
-    this.client.getSelf().toCompletableFuture().join();
+    CLIENT.getSelf().toCompletableFuture().join();
   }
 
   @Test
@@ -47,20 +47,20 @@ public class DBLAPITest {
                     StandardCharsets.UTF_8))
             .getAsJsonArray();
 
-    this.client.postCommands(commands).toCompletableFuture().join();
+    CLIENT.postCommands(commands).toCompletableFuture().join();
   }
 
   @ParameterizedTest
   @EnumSource(UserSource.class)
   public void getVote(final UserSource userSource) {
-    this.client.getVote(userSource, "123456").toCompletableFuture().join();
+    CLIENT.getVote(userSource, "123456").toCompletableFuture().join();
   }
 
   @Test
   @SuppressWarnings("unused")
   public void getVotes() {
     final PaginatedVotes firstPage =
-        this.client
+        CLIENT
             .getVotes(OffsetDateTime.of(2026, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
             .toCompletableFuture()
             .join();

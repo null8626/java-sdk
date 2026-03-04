@@ -50,7 +50,7 @@ public class DBLWebhooks extends OncePerRequestFilter implements DBLWebhooksList
   @Override
   @SuppressWarnings("UseSpecificCatch")
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain)
       throws IOException, ServletException {
     if (request.getMethod().equalsIgnoreCase("POST")) {
       final String signatureHeader = request.getHeader("x-topgg-signature");

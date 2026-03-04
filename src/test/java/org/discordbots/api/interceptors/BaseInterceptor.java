@@ -23,9 +23,9 @@ public abstract class BaseInterceptor implements Interceptor {
           BaseInterceptor.class.getResourceAsStream(
               "/" + className.substring(0, className.length() - 11) + "Response.json");
 
-      this.response = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+      response = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     } catch (final IOException | NullPointerException ignored) {
-      this.response = "";
+      response = "";
     }
   }
 
