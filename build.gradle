@@ -3,8 +3,10 @@ plugins {
   id 'maven-publish'
 }
 
+def ver = '3.0.0'
+
 group = 'org.discordbots'
-version = '3.0.0'
+version = ver
 description = 'The community-maintained Java library for Top.gg.'
 
 if (JavaVersion.current() < JavaVersion.VERSION_17) {
@@ -26,15 +28,121 @@ sourceSets {
 }
 
 configurations {
-  dropwizardWebhooksImplementation.extendsFrom(webhooksImplementation)
-  eclipseJettyWebhooksImplementation.extendsFrom(webhooksImplementation)
-  springBootWebhooksImplementation.extendsFrom(webhooksImplementation)
+  dropwizardWebhooksImplementation.extendsFrom webhooksImplementation
+  eclipseJettyWebhooksImplementation.extendsFrom webhooksImplementation
+  springBootWebhooksImplementation.extendsFrom webhooksImplementation
 
   googleJavaFormat
 }
 
 test {
   useJUnitPlatform()
+}
+
+java {
+  withSourcesJar()
+
+  registerFeature('api') {
+    usingSourceSet sourceSets.main
+    
+    capability('org.discordbots', 'api', ver)
+  }
+
+  registerFeature('jdaWrapper') {
+    usingSourceSet sourceSets.jdaWrapper
+    
+    capability('org.discordbots', 'jdaWrapper', ver)
+  }
+
+  registerFeature('discord4jWrapper') {
+    usingSourceSet sourceSets.discord4jWrapper
+    
+    capability('org.discordbots', 'discord4jWrapper', ver)
+  }
+
+  registerFeature('webhooks') {
+    usingSourceSet sourceSets.webhooks
+    
+    capability('org.discordbots', 'webhooks', ver)
+  }
+
+  registerFeature('dropwizardWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.dropwizardWebhooks
+
+    capability('org.discordbots', 'dropwizardWebhooks', ver)
+  }
+
+  registerFeature('eclipseJettyWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.eclipseJettyWebhooks
+
+    capability('org.discordbots', 'eclipseJettyWebhooks', ver)
+  }
+
+  registerFeature('springBootWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.springBootWebhooks
+
+    capability('org.discordbots', 'springBootWebhooks', ver)
+  }
+}
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      artifactId = 'DBL-Java-Library'
+      groupId = 'org.discordbots'
+      version = ver
+    
+      from components.java
+      
+      pom {
+        name = 'DBL-Java-Library'
+        description = 'The community-maintained Java library for Top.gg.'
+        url = 'https://github.com/top-gg-community/java-sdk'
+        inceptionYear = '2020'
+        
+        licenses {
+          license {
+            name = 'Apache License 2.0'
+            distribution = 'repo'
+            url = 'https://github.com/top-gg-community/java-sdk/blob/$version/LICENSE'
+          }
+        }
+        
+        developers {
+          developer {
+            id = 'top-gg-community'
+            name = 'Top.gg'
+            url = 'https://github.com/top-gg-community'
+          }
+        }
+        
+        scm {
+          url = 'https://github.com/top-gg-community/java-sdk'
+          connection = 'scm:git:github.com/top-gg-community/java-sdk.git'
+          developerConnection = 'scm:git:ssh://github.com/top-gg-community/java-sdk.git'
+        }
+        
+        issueManagement {
+          system = 'GitHub'
+          url = 'https://github.com/top-gg-community/java-sdk/issues'
+        }
+        
+        ciManagement {
+          system = 'Github Actions'
+          url = 'https://github.com/top-gg-community/java-sdk/actions'
+        }
+      }
+    }
+  }
+  
+  repositories {
+    maven {
+      url = layout.buildDirectory.dir 'staging-deploy'
+    }
+  }
 }
 
 dependencies {
@@ -71,6 +179,11 @@ dependencies {
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.3'
   testImplementation 'com.google.code.gson:gson:2.13.2'
+
+  testImplementation sourceSets.dropwizardWebhooks.output
+  testImplementation sourceSets.eclipseJettyWebhooks.output
+  testImplementation sourceSets.springBootWebhooks.output
+
   testCompileOnly 'org.junit.jupiter:junit-jupiter-params:6.0.3'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.3'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
@@ -87,8 +200,8 @@ tasks.register('format', JavaExec) {
   def sources = fileTree(dir: 'src', include: '**/*.java')
   args = ['-i'] + sources
 
-  inputs.files(sources)
-  outputs.files(sources)
+  inputs.files sources
+  outputs.files sources
 
   jvmArgs(
     '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',

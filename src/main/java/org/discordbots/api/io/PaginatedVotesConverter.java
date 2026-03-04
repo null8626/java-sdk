@@ -8,14 +8,14 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.discordbots.api.DiscordBotListAPI;
+import org.discordbots.api.DBLAPI;
 import org.discordbots.api.entity.PaginatedVotes;
 import org.discordbots.api.entity.Vote;
 
 public class PaginatedVotesConverter implements JsonDeserializer<PaginatedVotes> {
-  private final DiscordBotListAPI client;
+  private final DBLAPI client;
 
-  public PaginatedVotesConverter(final DiscordBotListAPI client) {
+  public PaginatedVotesConverter(final DBLAPI client) {
     this.client = client;
   }
 

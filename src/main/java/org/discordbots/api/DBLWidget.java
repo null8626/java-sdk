@@ -2,7 +2,7 @@ package org.discordbots.api;
 
 import org.discordbots.api.entity.ProjectType;
 
-public final class DiscordBotListWidget {
+public final class DBLWidget {
   private static final String BASE_URL = "https://top.gg/api/v1/widgets";
 
   public static String large(final ProjectType projectType, final String id) {

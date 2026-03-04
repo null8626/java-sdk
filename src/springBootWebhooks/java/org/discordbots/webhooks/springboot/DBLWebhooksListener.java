@@ -6,7 +6,7 @@ import org.discordbots.webhooks.payload.IntegrationDeletePayload;
 import org.discordbots.webhooks.payload.TestPayload;
 import org.discordbots.webhooks.payload.VoteCreatePayload;
 
-public interface DiscordBotListWebhooksListener {
+public interface DBLWebhooksListener {
   default void onIntegrationCreate(
       HttpServletResponse response, IntegrationCreatePayload payload, String trace) {
     response.setStatus(HttpServletResponse.SC_NO_CONTENT);

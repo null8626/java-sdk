@@ -27,12 +27,11 @@ import org.discordbots.webhooks.payload.TestPayload;
 import org.discordbots.webhooks.payload.VoteCreatePayload;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class DiscordBotListWebhooks extends OncePerRequestFilter
-    implements DiscordBotListWebhooksListener {
+public class DBLWebhooks extends OncePerRequestFilter implements DBLWebhooksListener {
   private byte[] secret;
   private final Gson gson;
 
-  public DiscordBotListWebhooks(final String secret) {
+  public DBLWebhooks(final String secret) {
     this.secret = secret.getBytes(StandardCharsets.UTF_8);
     this.gson =
         new GsonBuilder()

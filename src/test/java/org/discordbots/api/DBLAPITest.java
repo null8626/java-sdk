@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-public class DiscordBotListAPITest {
-  private DiscordBotListAPI client;
+public class DBLAPITest {
+  private DBLAPI client;
 
   @BeforeEach
   public void initiate() {
     this.client =
-        new DiscordBotListAPI(
+        new DBLAPI(
             new OkHttpClient.Builder()
                 .addInterceptor(new GetSelfInterceptor())
                 .addInterceptor(new GetVoteInterceptor())

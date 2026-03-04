@@ -31,7 +31,7 @@ import org.discordbots.api.io.RawPostCommandsTransformer;
 import org.discordbots.api.io.ResponseTransformer;
 import org.discordbots.api.io.UnsuccessfulHttpException;
 
-public class DiscordBotListAPI {
+public class DBLAPI {
   private static final HttpUrl baseUrl =
       new HttpUrl.Builder()
           .scheme("https")
@@ -43,7 +43,7 @@ public class DiscordBotListAPI {
   private final OkHttpClient httpClient;
   private final Gson gson;
 
-  public DiscordBotListAPI(final OkHttpClient httpClient) {
+  public DBLAPI(final OkHttpClient httpClient) {
     this.gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
@@ -53,7 +53,7 @@ public class DiscordBotListAPI {
     this.httpClient = httpClient;
   }
 
-  public DiscordBotListAPI(final String token) {
+  public DBLAPI(final String token) {
     this(
         new OkHttpClient.Builder()
             .addInterceptor(
