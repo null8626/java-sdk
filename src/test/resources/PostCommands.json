@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "type": 1,
+    "application_id": "1",
+    "name": "test",
+    "description": "command description",
+    "default_member_permissions": "",
+    "version": "1"
+  }
+]

@@ -6,7 +6,7 @@ import java.util.concurrent.CompletionStage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.discordbots.api.client.io.PostCommandsTransformer;
+import org.discordbots.api.io.PostCommandsTransformer;
 
 public class JDAPostCommandsTransformer implements PostCommandsTransformer {
   private final JDA jda;
@@ -17,8 +17,7 @@ public class JDAPostCommandsTransformer implements PostCommandsTransformer {
 
   @Override
   public CompletionStage<String> toJsonString() {
-    return this.jda
-        .retrieveCommands()
+    return jda.retrieveCommands()
         .submit()
         .thenApply(
             commands -> {
