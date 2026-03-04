@@ -183,6 +183,7 @@ dependencies {
   springBootWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.3'
+  testImplementation 'org.junit.platform:junit-platform-suite-api:6.0.3'
   testImplementation 'com.google.code.gson:gson:2.13.2'
   testImplementation 'io.dropwizard:dropwizard-testing:5.0.1'
 

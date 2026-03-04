@@ -15,21 +15,21 @@ public class CustomWebhooks extends DBLWebhooks {
 
   @Override
   public Response onIntegrationCreate(final IntegrationCreatePayload payload, final String trace) {
-    return Response.status(Response.Status.OK).entity("integrationCreate," + trace).build();
+    return Response.status(Response.Status.OK).entity("dw:integrationCreate," + trace).build();
   }
 
   @Override
   public Response onIntegrationDelete(final IntegrationDeletePayload payload, final String trace) {
-    return Response.status(Response.Status.OK).entity("integrationDelete," + trace).build();
+    return Response.status(Response.Status.OK).entity("dw:integrationDelete," + trace).build();
   }
 
   @Override
   public Response onTest(final TestPayload payload, final String trace) {
-    return Response.status(Response.Status.OK).entity("test," + trace).build();
+    return Response.status(Response.Status.OK).entity("dw:test," + trace).build();
   }
 
   @Override
   public Response onVoteCreate(final VoteCreatePayload payload, final String trace) {
-    return Response.status(Response.Status.OK).entity("voteCreate," + trace).build();
+    return Response.status(Response.Status.OK).entity("dw:voteCreate," + trace).build();
   }
 }

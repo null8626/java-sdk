@@ -18,10 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DBLWebhooksTest {
+public class DBLDropwizardWebhooksTest {
   private static final DropwizardAppExtension<Configuration> APP =
       new DropwizardAppExtension<>(
           CustomServer.class, ResourceHelpers.resourceFilePath("dropwizard-test-config.yml"));
+
   private static final String SECRET = System.getenv("TOPGG_WEBHOOK_SECRET");
   private static final String TRACE = "trace";
   private static MockPayloads MOCK_PAYLOADS;
@@ -45,7 +46,7 @@ public class DBLWebhooksTest {
             .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
     Assertions.assertEquals(200, response.getStatus());
-    Assertions.assertEquals(name + "," + TRACE, response.readEntity(String.class));
+    Assertions.assertEquals("dw:" + name + "," + TRACE, response.readEntity(String.class));
   }
 
   @Test
