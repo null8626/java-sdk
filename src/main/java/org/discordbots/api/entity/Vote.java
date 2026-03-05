@@ -5,7 +5,7 @@ import java.time.OffsetDateTime;
 
 public class Vote {
   @SerializedName("user_id")
-  private String userId;
+  private String voterId;
 
   @SerializedName("platform_id")
   private String platformId;
@@ -18,8 +18,8 @@ public class Vote {
 
   private int weight;
 
-  public String getUserId() {
-    return userId;
+  public String getVoterId() {
+    return voterId;
   }
 
   public String getPlatformId() {
