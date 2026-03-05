@@ -36,7 +36,7 @@ public abstract class BaseInterceptor implements Interceptor {
   protected abstract String getMessage();
 
   @Override
-  public Response intercept(Chain chain) throws IOException {
+  public Response intercept(final Chain chain) throws IOException {
     final Request request = chain.request();
 
     final HttpUrl url = request.url();

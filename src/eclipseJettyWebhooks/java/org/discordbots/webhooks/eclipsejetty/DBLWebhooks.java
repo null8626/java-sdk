@@ -48,7 +48,7 @@ public class DBLWebhooks extends HttpServlet implements DBLWebhooksListener {
 
   @Override
   @SuppressWarnings("UseSpecificCatch")
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
       throws IOException, ServletException {
     try {
       final String signatureHeader = request.getHeader("x-topgg-signature");
@@ -101,6 +101,10 @@ public class DBLWebhooks extends HttpServlet implements DBLWebhooksListener {
           case "webhook.test" -> onTest(response, payload.getData(gson, TestPayload.class), trace);
           case "vote.create" ->
               onVoteCreate(response, payload.getData(gson, VoteCreatePayload.class), trace);
+          default -> {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Bad Request");
+          }
         }
       } catch (final Throwable ignored) {
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

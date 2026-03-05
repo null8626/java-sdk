@@ -47,12 +47,6 @@ test {
 java {
   withSourcesJar()
 
-  registerFeature('api') {
-    usingSourceSet sourceSets.main
-    
-    capability('org.discordbots', 'api', ver)
-  }
-
   registerFeature('jdaWrapper') {
     usingSourceSet sourceSets.jdaWrapper
     
@@ -186,6 +180,8 @@ dependencies {
   testImplementation 'org.junit.platform:junit-platform-suite-api:6.0.3'
   testImplementation 'com.google.code.gson:gson:2.13.2'
   testImplementation 'io.dropwizard:dropwizard-testing:5.0.1'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test-classic:4.0.3'
+  testImplementation 'org.springframework.boot:spring-boot-starter-security-test:4.0.3'
 
   testImplementation sourceSets.dropwizardWebhooks.output
   testImplementation sourceSets.eclipseJettyWebhooks.output

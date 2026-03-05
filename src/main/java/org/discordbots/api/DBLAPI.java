@@ -166,13 +166,13 @@ public class DBLAPI {
     call.enqueue(
         new Callback() {
           @Override
-          public void onFailure(Call call, IOException error) {
+          public void onFailure(final Call call, final IOException error) {
             future.completeExceptionally(error);
           }
 
           @Override
           @SuppressWarnings("UseSpecificCatch")
-          public void onResponse(Call call, Response response) {
+          public void onResponse(final Call call, final Response response) {
             try {
               if (response.isSuccessful()) {
                 future.complete(responseTransformer.transform(response));

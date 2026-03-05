@@ -8,13 +8,13 @@ public class DefaultResponseTransformer<E> implements ResponseTransformer<E> {
   private final Class<E> aClass;
   private final Gson gson;
 
-  public DefaultResponseTransformer(Class<E> aClass, Gson gson) {
+  public DefaultResponseTransformer(final Class<E> aClass, final Gson gson) {
     this.aClass = aClass;
     this.gson = gson;
   }
 
   @Override
-  public E transform(Response response) throws IOException {
+  public E transform(final Response response) throws IOException {
     return gson.fromJson(response.body().string(), aClass);
   }
 }

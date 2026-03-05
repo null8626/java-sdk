@@ -4,7 +4,7 @@ import okhttp3.Response;
 
 public class EmptyResponseTransformer implements ResponseTransformer<Void> {
   @Override
-  public Void transform(Response response) {
+  public Void transform(final Response response) {
     return null;
   }
 }

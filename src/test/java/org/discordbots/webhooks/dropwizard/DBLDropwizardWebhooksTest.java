@@ -10,8 +10,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import org.discordbots.webhooks.MockPayloads;
-import org.discordbots.webhooks.MockSignature;
+import org.discordbots.webhooks.Mocks;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,23 +24,21 @@ public class DBLDropwizardWebhooksTest {
 
   private static final String SECRET = System.getenv("TOPGG_WEBHOOK_SECRET");
   private static final String TRACE = "trace";
-  private static MockPayloads MOCK_PAYLOADS;
+  private static Mocks MOCKS;
 
   @BeforeAll
   public static void setup() throws IOException, NullPointerException {
-    MOCK_PAYLOADS = new MockPayloads();
+    MOCKS = new Mocks();
   }
 
   private void send(final String name, final String payload)
       throws NoSuchAlgorithmException, InvalidKeyException {
-    final MockSignature signature = new MockSignature(SECRET, payload);
-
     final Response response =
         APP.client()
             .target(String.format("http://localhost:%d/webhook", APP.getLocalPort()))
             .request()
             .header("Content-Type", "application/json")
-            .header("x-topgg-signature", signature.getSignatureHeader())
+            .header("x-topgg-signature", Mocks.signature(SECRET, payload))
             .header("x-topgg-trace", TRACE)
             .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
@@ -50,22 +47,22 @@ public class DBLDropwizardWebhooksTest {
   }
 
   @Test
-  void integrationCreate() throws NoSuchAlgorithmException, InvalidKeyException {
-    send("integrationCreate", MOCK_PAYLOADS.integrationCreate);
+  public void integrationCreate() throws NoSuchAlgorithmException, InvalidKeyException {
+    send("integrationCreate", MOCKS.integrationCreatePayload);
   }
 
   @Test
-  void integrationDelete() throws NoSuchAlgorithmException, InvalidKeyException {
-    send("integrationDelete", MOCK_PAYLOADS.integrationDelete);
+  public void integrationDelete() throws NoSuchAlgorithmException, InvalidKeyException {
+    send("integrationDelete", MOCKS.integrationDeletePayload);
   }
 
   @Test
-  void test() throws NoSuchAlgorithmException, InvalidKeyException {
-    send("test", MOCK_PAYLOADS.test);
+  public void test() throws NoSuchAlgorithmException, InvalidKeyException {
+    send("test", MOCKS.testPayload);
   }
 
   @Test
-  void voteCreate() throws NoSuchAlgorithmException, InvalidKeyException {
-    send("voteCreate", MOCK_PAYLOADS.voteCreate);
+  public void voteCreate() throws NoSuchAlgorithmException, InvalidKeyException {
+    send("voteCreate", MOCKS.voteCreatePayload);
   }
 }
