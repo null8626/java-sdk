@@ -1,0 +1,18 @@
+package org.discordbots.api.io;
+
+import okhttp3.Response;
+
+public class UnsuccessfulHttpException extends Exception {
+  private final Response response;
+
+  public UnsuccessfulHttpException(final Response response) {
+    super(
+        "The server responded with code: " + response.code() + ", message: " + response.message());
+
+    this.response = response;
+  }
+
+  public Response getResponse() {
+    return response;
+  }
+}

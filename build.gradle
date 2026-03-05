@@ -1,19 +1,221 @@
-group 'org.discordbots'
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+}
 
-apply plugin: 'java'
-apply plugin: 'maven'
+def ver = '3.0.0'
+
+group = 'org.discordbots'
+version = ver
+description = 'The community-maintained Java library for Top.gg.'
+
+if (JavaVersion.current() < JavaVersion.VERSION_17) {
+  throw new GradleException('Top.gg\'s Java SDK requires Java 17 or later. Java ${JavaVersion.current()} is not supported.')
+}
 
 repositories {
-    mavenCentral()
+  mavenCentral()
+}
+
+sourceSets {
+  jdaWrapper
+  discord4jWrapper
+
+  webhooks
+  dropwizardWebhooks
+  eclipseJettyWebhooks
+  springBootWebhooks
+}
+
+configurations {
+  dropwizardWebhooksImplementation.extendsFrom webhooksImplementation
+  eclipseJettyWebhooksImplementation.extendsFrom webhooksImplementation
+  springBootWebhooksImplementation.extendsFrom webhooksImplementation
+
+
+  testImplementation.extendsFrom dropwizardWebhooksImplementation
+  testImplementation.extendsFrom eclipseJettyWebhooksImplementation
+  testImplementation.extendsFrom springBootWebhooksImplementation
+
+  googleJavaFormat
+}
+
+test {
+  useJUnitPlatform()
+}
+
+java {
+  withSourcesJar()
+
+  registerFeature('jdaWrapper') {
+    usingSourceSet sourceSets.jdaWrapper
+    
+    capability('org.discordbots', 'jdaWrapper', ver)
+  }
+
+  registerFeature('discord4jWrapper') {
+    usingSourceSet sourceSets.discord4jWrapper
+    
+    capability('org.discordbots', 'discord4jWrapper', ver)
+  }
+
+  registerFeature('webhooks') {
+    usingSourceSet sourceSets.webhooks
+    
+    capability('org.discordbots', 'webhooks', ver)
+  }
+
+  registerFeature('dropwizardWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.dropwizardWebhooks
+
+    capability('org.discordbots', 'dropwizardWebhooks', ver)
+  }
+
+  registerFeature('eclipseJettyWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.eclipseJettyWebhooks
+
+    capability('org.discordbots', 'eclipseJettyWebhooks', ver)
+  }
+
+  registerFeature('springBootWebhooks') {
+    usingSourceSet sourceSets.webhooks
+    usingSourceSet sourceSets.springBootWebhooks
+
+    capability('org.discordbots', 'springBootWebhooks', ver)
+  }
+}
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      artifactId = 'DBL-Java-Library'
+      groupId = 'org.discordbots'
+      version = ver
+    
+      from components.java
+      
+      pom {
+        name = 'DBL-Java-Library'
+        description = 'The community-maintained Java library for Top.gg.'
+        url = 'https://github.com/top-gg-community/java-sdk'
+        inceptionYear = '2020'
+        
+        licenses {
+          license {
+            name = 'Apache License 2.0'
+            distribution = 'repo'
+            url = 'https://github.com/top-gg-community/java-sdk/blob/$ver/LICENSE'
+          }
+        }
+        
+        developers {
+          developer {
+            id = 'top-gg-community'
+            name = 'Top.gg'
+            url = 'https://github.com/top-gg-community'
+          }
+        }
+        
+        scm {
+          url = 'https://github.com/top-gg-community/java-sdk'
+          connection = 'scm:git:github.com/top-gg-community/java-sdk.git'
+          developerConnection = 'scm:git:ssh://github.com/top-gg-community/java-sdk.git'
+        }
+        
+        issueManagement {
+          system = 'GitHub'
+          url = 'https://github.com/top-gg-community/java-sdk/issues'
+        }
+        
+        ciManagement {
+          system = 'Github Actions'
+          url = 'https://github.com/top-gg-community/java-sdk/actions'
+        }
+      }
+    }
+  }
+  
+  repositories {
+    maven {
+      url = layout.buildDirectory.dir 'staging-deploy'
+    }
+  }
 }
 
 dependencies {
+  implementation 'org.slf4j:slf4j-api:2.0.17'
 
-    //Logger
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+  implementation 'org.json:json:20251224'
+  implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+  implementation 'com.google.code.gson:gson:2.13.2'
+  implementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
 
-    compile group: 'org.json',             name: 'json',   version: '20180130'
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'
-    compile group: 'com.google.code.gson', name: 'gson',   version: '2.8.5'
-    compile group: 'com.fatboyindustrial.gson-javatime-serialisers', name: 'gson-javatime-serialisers', version: '1.1.1'
+  jdaWrapperImplementation sourceSets.main.output
+  jdaWrapperImplementation 'com.google.code.gson:gson:2.13.2'
+  jdaWrapperImplementation('net.dv8tion:JDA:6.3.1') {
+    exclude module: 'opus-java'
+    exclude module: 'tink' 
+  }
+
+  discord4jWrapperImplementation sourceSets.main.output
+  discord4jWrapperImplementation 'com.discord4j:discord4j-core:3.3.1'
+
+  webhooksImplementation 'com.google.code.gson:gson:2.13.2'
+  webhooksImplementation 'com.fatboyindustrial.gson-javatime-serialisers:gson-javatime-serialisers:1.1.2'
+
+  dropwizardWebhooksImplementation sourceSets.webhooks.output
+  dropwizardWebhooksImplementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
+  dropwizardWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+  eclipseJettyWebhooksImplementation sourceSets.webhooks.output
+  eclipseJettyWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+  springBootWebhooksImplementation sourceSets.webhooks.output
+  springBootWebhooksImplementation 'org.springframework.boot:spring-boot-starter-web:4.0.3'
+  springBootWebhooksImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:6.0.3'
+  testImplementation 'org.junit.platform:junit-platform-suite-api:6.0.3'
+  testImplementation 'com.google.code.gson:gson:2.13.2'
+  testImplementation 'io.dropwizard:dropwizard-testing:5.0.1'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test-classic:4.0.3'
+  testImplementation 'org.springframework.boot:spring-boot-starter-security-test:4.0.3'
+
+  testImplementation sourceSets.dropwizardWebhooks.output
+  testImplementation sourceSets.eclipseJettyWebhooks.output
+  testImplementation sourceSets.springBootWebhooks.output
+
+  testCompileOnly 'org.junit.jupiter:junit-jupiter-params:6.0.3'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:6.0.3'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
+
+  googleJavaFormat 'com.google.googlejavaformat:google-java-format:1.34.1'
+}
+
+tasks.register('format', JavaExec) {
+  group = 'format'
+  description = 'Format code'
+  classpath = configurations.googleJavaFormat
+  mainClass = 'com.google.googlejavaformat.java.Main'
+
+  def sources = fileTree(dir: 'src', include: '**/*.java')
+  args = ['-i'] + sources
+
+  inputs.files sources
+  outputs.files sources
+
+  jvmArgs(
+    '--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+    '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+  )
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs << '-Xlint:deprecation'
 }
