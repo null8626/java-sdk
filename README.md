@@ -80,8 +80,6 @@ import org.discordbots.api.entity.UserSource;
 client.getVote(UserSource.DISCORD, "661200758510977084").whenComplete((vote, error) -> {
   if (error != null) {
     System.err.println("Error: " + error.getMessage());
-  } else if (vote == null) {
-    System.out.println("The user has not voted.");
   } else {
     // ...
   }
@@ -96,8 +94,6 @@ import org.discordbots.api.entity.UserSource;
 client.getVote(UserSource.TOPGG, "8226924471638491136").whenComplete((vote, error) -> {
   if (error != null) {
     System.err.println("Error: " + error.getMessage());
-  } else if (vote == null) {
-    System.out.println("The user has not voted.");
   } else {
     // ...
   }
