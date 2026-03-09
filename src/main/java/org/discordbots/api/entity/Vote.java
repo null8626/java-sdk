@@ -3,20 +3,12 @@ package org.discordbots.api.entity;
 import com.google.gson.annotations.SerializedName;
 import java.time.OffsetDateTime;
 
-public class Vote {
+public class Vote extends PartialVote {
   @SerializedName("user_id")
   private String voterId;
 
   @SerializedName("platform_id")
   private String platformId;
-
-  @SerializedName("created_at")
-  private OffsetDateTime votedAt;
-
-  @SerializedName("expires_at")
-  private OffsetDateTime expiresAt;
-
-  private int weight;
 
   public String getVoterId() {
     return voterId;
@@ -24,17 +16,5 @@ public class Vote {
 
   public String getPlatformId() {
     return platformId;
-  }
-
-  public OffsetDateTime getVotedAt() {
-    return votedAt;
-  }
-
-  public OffsetDateTime getExpiresAt() {
-    return expiresAt;
-  }
-
-  public int getWeight() {
-    return weight;
   }
 }
