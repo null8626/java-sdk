@@ -44,7 +44,7 @@ public class DBLAPI {
   private final Gson gson;
 
   public DBLAPI(final OkHttpClient httpClient) {
-    this.gson =
+    gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
             .registerTypeAdapter(PaginatedVotes.class, new PaginatedVotesConverter(this))
