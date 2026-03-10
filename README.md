@@ -130,7 +130,7 @@ client.getVotes(since).whenComplete((firstPage, error) -> {
 
 #### JDA
 
-> **NOTE**: Requires the `jdaWrapper` capability.
+> **NOTE**: This requires the `jdaWrapper` capability.
 
 ```java
 final JDA jda = ...;
@@ -140,7 +140,7 @@ client.postCommands(jda);
 
 #### Discord4J
 
-> **NOTE**: Requires the `discord4jWrapper` capability.
+> **NOTE**: This requires the `discord4jWrapper` capability.
 
 ```java
 final DiscordClient bot = ...;
@@ -214,7 +214,7 @@ final String widgetUrl = DBLWidget.social(ProjectType.DISCORD_BOT, "574652751745
 
 #### Dropwizard
 
-> **NOTE**: Requires the `dropwizardWebhooks` capability.
+> **NOTE**: This requires the `dropwizardWebhooks` capability.
 
 In your `Webhooks.java`:
 
@@ -269,7 +269,7 @@ env.jersey().register(new Webhooks());
 
 #### Eclipse Jetty
 
-> **NOTE**: Requires the `eclipseJettyWebhooks` capability.
+> **NOTE**: This requires the `eclipseJettyWebhooks` capability.
 
 In your `Webhooks.java`:
 
@@ -330,7 +330,7 @@ context.addServlet(new ServletHolder(new Webhooks()), "/webhook");
 
 #### Spring Boot
 
-> **NOTE**: Requires the `springBootWebhooks` capability.
+> **NOTE**: This requires the `springBootWebhooks` capability.
 
 In your `Webhooks.java`:
 
