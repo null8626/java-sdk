@@ -1,6 +1,6 @@
 # Top.gg Java SDK
 
-The community-maintained Java library for Top.gg.
+The community-maintained Java SDK for Top.gg.
 
 ## Chapters
 

@@ -7,7 +7,7 @@ def ver = '3.0.0'
 
 group = 'org.discordbots'
 version = ver
-description = 'The community-maintained Java library for Top.gg.'
+description = 'The community-maintained Java SDK for Top.gg.'
 
 if (JavaVersion.current() < JavaVersion.VERSION_17) {
   throw new GradleException('Top.gg\'s Java SDK requires Java 17 or later. Java ${JavaVersion.current()} is not supported.')
@@ -98,7 +98,7 @@ publishing {
       
       pom {
         name = 'DBL-Java-Library'
-        description = 'The community-maintained Java library for Top.gg.'
+        description = 'The community-maintained Java SDK for Top.gg.'
         url = 'https://github.com/top-gg-community/java-sdk'
         inceptionYear = '2020'
         
