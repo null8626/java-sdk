@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.crypto.Mac;
@@ -28,6 +29,8 @@ import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
 
 public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
+  private static final Logger logger = Logger.getLogger(TopggWebhooks.class.getName());
+
   private byte[] secret;
   private final Gson gson;
 
@@ -99,6 +102,12 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
         | AssertionError
         | JsonSyntaxException
         | JsonIOException error) {
+      if (error instanceof JsonSyntaxException) {
+        logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+      }
+
       return ResponseEntity.status(
               (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException)
                   ? HttpStatus.INTERNAL_SERVER_ERROR

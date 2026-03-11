@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public enum ProjectType {
   @SerializedName("bot")
-  DISCORD_BOT,
+  BOT,
 
   @SerializedName("server")
-  DISCORD_SERVER
+  SERVER
 }

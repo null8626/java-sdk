@@ -8,12 +8,14 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -31,6 +33,8 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 
 public abstract class TopggWebhooks implements TopggWebhookEventListener {
+  private static final Logger logger = Logger.getLogger(TopggWebhooks.class.getName());
+
   private byte[] secret;
   private final Gson gson;
 
@@ -53,6 +57,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
   @POST
   @SuppressWarnings("UseSpecificCatch")
   public Response handle(@Context HttpServletRequest request) throws WebApplicationException {
+    String body = "";
+
     try {
       final String signatureHeader = request.getHeader("x-topgg-signature");
 
@@ -78,8 +84,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
 
       hmac.init(key);
 
-      final String body =
-          new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+      body = new String(ByteStreams.limit(request.getInputStream(), 2 * 1024 * 1024).readAllBytes(), StandardCharsets.UTF_8);
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
@@ -116,9 +121,13 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
         | IOException error) {
       if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
         throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);
-      } else {
-        return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
+      } else if (error instanceof JsonSyntaxException) {
+        logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+
+        return Response.status(Response.Status.NO_CONTENT).build();
       }
+
+      return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
     }
   }
 }
