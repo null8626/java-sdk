@@ -178,36 +178,40 @@ client.postCommands(commands);
 
 ```java
 import gg.top.api.TopggWidget;
+import gg.top.api.entity.Platform;
 import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = TopggWidget.large(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.large(Platform.DISCORD, ProjectType.BOT, "1026525568344264724");
 ```
 
 #### Votes
 
 ```java
 import gg.top.api.TopggWidget;
+import gg.top.api.entity.Platform;
 import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = TopggWidget.votes(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.votes(Platform.DISCORD, ProjectType.BOT, "1026525568344264724");
 ```
 
 #### Owner
 
 ```java
 import gg.top.api.TopggWidget;
+import gg.top.api.entity.Platform;
 import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = TopggWidget.owner(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.owner(Platform.DISCORD, ProjectType.BOT, "1026525568344264724");
 ```
 
 #### Social
 
 ```java
 import gg.top.api.TopggWidget;
+import gg.top.api.entity.Platform;
 import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = TopggWidget.social(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.social(Platform.DISCORD, ProjectType.BOT, "1026525568344264724");
 ```
 
 ### Webhooks
