@@ -1,4 +1,4 @@
-package org.discordbots.api.io;
+package gg.top.api.io;
 
 import com.google.gson.JsonArray;
 import java.util.concurrent.CompletableFuture;

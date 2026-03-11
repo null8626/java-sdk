@@ -1,4 +1,4 @@
-package org.discordbots.api.jda;
+package gg.top.api.jda;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
@@ -6,7 +6,7 @@ import java.util.concurrent.CompletionStage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import org.discordbots.api.io.PostCommandsTransformer;
+import gg.top.api.io.PostCommandsTransformer;
 
 public class JDAPostCommandsTransformer implements PostCommandsTransformer {
   private final JDA jda;

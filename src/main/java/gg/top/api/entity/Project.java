@@ -1,4 +1,4 @@
-package org.discordbots.api.entity;
+package gg.top.api.entity;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

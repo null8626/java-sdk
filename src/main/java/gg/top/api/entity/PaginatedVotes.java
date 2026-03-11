@@ -1,15 +1,15 @@
-package org.discordbots.api.entity;
+package gg.top.api.entity;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import org.discordbots.api.DBLAPI;
+import gg.top.api.TopggAPI;
 
 public class PaginatedVotes {
   private final List<Vote> votes;
   private final String cursor;
-  private final DBLAPI client;
+  private final TopggAPI client;
 
-  public PaginatedVotes(final List<Vote> votes, final String cursor, final DBLAPI client) {
+  public PaginatedVotes(final List<Vote> votes, final String cursor, final TopggAPI client) {
     this.votes = votes;
     this.cursor = cursor;
     this.client = client;

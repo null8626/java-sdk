@@ -1,8 +1,8 @@
-package org.discordbots.api;
+package gg.top.api;
 
-import org.discordbots.api.entity.ProjectType;
+import gg.top.api.entity.ProjectType;
 
-public final class DBLWidget {
+public final class TopggWidget {
   private static final String BASE_URL = "https://top.gg/api/v1/widgets";
 
   public static String large(final ProjectType projectType, final String id) {

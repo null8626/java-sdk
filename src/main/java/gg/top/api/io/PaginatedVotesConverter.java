@@ -1,4 +1,4 @@
-package org.discordbots.api.io;
+package gg.top.api.io;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -8,14 +8,14 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.discordbots.api.DBLAPI;
-import org.discordbots.api.entity.PaginatedVotes;
-import org.discordbots.api.entity.Vote;
+import gg.top.api.TopggAPI;
+import gg.top.api.entity.PaginatedVotes;
+import gg.top.api.entity.Vote;
 
 public class PaginatedVotesConverter implements JsonDeserializer<PaginatedVotes> {
-  private final DBLAPI client;
+  private final TopggAPI client;
 
-  public PaginatedVotesConverter(final DBLAPI client) {
+  public PaginatedVotesConverter(final TopggAPI client) {
     this.client = client;
   }
 

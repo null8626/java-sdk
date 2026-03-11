@@ -1,4 +1,4 @@
-package org.discordbots.api;
+package gg.top.api;
 
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
 import com.google.gson.Gson;
@@ -19,19 +19,19 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.discordbots.api.entity.PaginatedVotes;
-import org.discordbots.api.entity.PartialVote;
-import org.discordbots.api.entity.Project;
-import org.discordbots.api.entity.UserSource;
-import org.discordbots.api.io.DefaultResponseTransformer;
-import org.discordbots.api.io.EmptyResponseTransformer;
-import org.discordbots.api.io.PaginatedVotesConverter;
-import org.discordbots.api.io.PostCommandsTransformer;
-import org.discordbots.api.io.RawPostCommandsTransformer;
-import org.discordbots.api.io.ResponseTransformer;
-import org.discordbots.api.io.UnsuccessfulHttpException;
+import gg.top.api.entity.PaginatedVotes;
+import gg.top.api.entity.PartialVote;
+import gg.top.api.entity.Project;
+import gg.top.api.entity.UserSource;
+import gg.top.api.io.DefaultResponseTransformer;
+import gg.top.api.io.EmptyResponseTransformer;
+import gg.top.api.io.PaginatedVotesConverter;
+import gg.top.api.io.PostCommandsTransformer;
+import gg.top.api.io.RawPostCommandsTransformer;
+import gg.top.api.io.ResponseTransformer;
+import gg.top.api.io.UnsuccessfulHttpException;
 
-public class DBLAPI {
+public class TopggAPI {
   private static final HttpUrl BASE_URL =
       new HttpUrl.Builder()
           .scheme("https")
@@ -43,7 +43,7 @@ public class DBLAPI {
   private final OkHttpClient httpClient;
   private final Gson gson;
 
-  public DBLAPI(final OkHttpClient httpClient) {
+  public TopggAPI(final OkHttpClient httpClient) {
     gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
@@ -53,7 +53,7 @@ public class DBLAPI {
     this.httpClient = httpClient;
   }
 
-  public DBLAPI(final String token) {
+  public TopggAPI(final String token) {
     this(
         new OkHttpClient.Builder()
             .addInterceptor(

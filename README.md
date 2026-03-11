@@ -22,7 +22,7 @@ The community-maintained Java SDK for Top.gg.
 Add the following line to the `dependencies` section of your `build.gradle`:
 
 ```groovy
-implementation 'org.discordbots:DBL-Java-Library:3.0.0'
+implementation 'gg.top:SDK:1.0.0'
 ```
 
 ### Maven
@@ -31,9 +31,9 @@ Add the following line to the `dependencies` section of your `pom.xml`:
 
 ```xml
 <dependency>
-  <groupId>com.discordbots</groupId>
-  <artifactId>DBL-Java-Library</artifactId>
-  <version>3.0.0</version>
+  <groupId>gg.top</groupId>
+  <artifactId>SDK</artifactId>
+  <version>1.0.0</version>
 </dependency>
 ```
 
@@ -51,9 +51,9 @@ This library provides several capabilities that can be enabled/disabled, such as
 ## Setting up
 
 ```java
-import org.discordbots.api.DBLAPI;
+import gg.top.api.TopggAPI;
 
-final DBLAPI client = new DBLAPI(System.getenv("TOPGG_TOKEN"));
+final TopggAPI client = new TopggAPI(System.getenv("TOPGG_TOKEN"));
 ```
 
 ## Usage
@@ -75,7 +75,7 @@ client.getSelf().whenComplete((project, error) -> {
 #### Discord ID
 
 ```java
-import org.discordbots.api.entity.UserSource;
+import gg.top.api.entity.UserSource;
 
 client.getVote(UserSource.DISCORD, "661200758510977084").whenComplete((vote, error) -> {
   if (error != null) {
@@ -89,7 +89,7 @@ client.getVote(UserSource.DISCORD, "661200758510977084").whenComplete((vote, err
 #### Top.gg ID
 
 ```java
-import org.discordbots.api.entity.UserSource;
+import gg.top.api.entity.UserSource;
 
 client.getVote(UserSource.TOPGG, "8226924471638491136").whenComplete((vote, error) -> {
   if (error != null) {
@@ -103,7 +103,7 @@ client.getVote(UserSource.TOPGG, "8226924471638491136").whenComplete((vote, erro
 ### Getting a cursor-based paginated list of votes for your project
 
 ```java
-import org.discordbots.api.entity.Vote;
+import gg.top.api.entity.Vote;
 
 final OffsetDateTime since = OffsetDateTime.of(2026, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
 
@@ -177,37 +177,37 @@ client.postCommands(commands);
 #### Large
 
 ```java
-import org.discordbots.api.DBLWidget;
-import org.discordbots.api.entity.ProjectType;
+import gg.top.api.TopggWidget;
+import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = DBLWidget.large(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.large(ProjectType.DISCORD_BOT, "574652751745777665");
 ```
 
 #### Votes
 
 ```java
-import org.discordbots.api.DBLWidget;
-import org.discordbots.api.entity.ProjectType;
+import gg.top.api.TopggWidget;
+import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = DBLWidget.votes(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.votes(ProjectType.DISCORD_BOT, "574652751745777665");
 ```
 
 #### Owner
 
 ```java
-import org.discordbots.api.DBLWidget;
-import org.discordbots.api.entity.ProjectType;
+import gg.top.api.TopggWidget;
+import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = DBLWidget.owner(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.owner(ProjectType.DISCORD_BOT, "574652751745777665");
 ```
 
 #### Social
 
 ```java
-import org.discordbots.api.DBLWidget;
-import org.discordbots.api.entity.ProjectType;
+import gg.top.api.TopggWidget;
+import gg.top.api.entity.ProjectType;
 
-final String widgetUrl = DBLWidget.social(ProjectType.DISCORD_BOT, "574652751745777665");
+final String widgetUrl = TopggWidget.social(ProjectType.DISCORD_BOT, "574652751745777665");
 ```
 
 ### Webhooks
@@ -219,18 +219,18 @@ final String widgetUrl = DBLWidget.social(ProjectType.DISCORD_BOT, "574652751745
 In your `Webhooks.java`:
 
 ```java
-import org.discordbots.webhooks.dropwizard.DBLWebhooks;
-import org.discordbots.webhooks.payload.IntegrationCreatePayload;
-import org.discordbots.webhooks.payload.IntegrationDeletePayload;
-import org.discordbots.webhooks.payload.TestPayload;
-import org.discordbots.webhooks.payload.VoteCreatePayload;
+import gg.top.webhooks.dropwizard.TopggWebhooks;
+import gg.top.webhooks.payload.IntegrationCreatePayload;
+import gg.top.webhooks.payload.IntegrationDeletePayload;
+import gg.top.webhooks.payload.TestPayload;
+import gg.top.webhooks.payload.VoteCreatePayload;
 
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 
 // POST /webhook
 @Path("/webhook")
-public class Webhooks extends DBLWebhooks {
+public class Webhooks extends TopggWebhooks {
   public Webhooks() {
     super(System.getenv("TOPGG_WEBHOOK_SECRET"));
   }
@@ -274,15 +274,15 @@ env.jersey().register(new Webhooks());
 In your `Webhooks.java`:
 
 ```java
-import org.discordbots.webhooks.eclipsejetty.DBLWebhooks;
-import org.discordbots.webhooks.payload.IntegrationCreatePayload;
-import org.discordbots.webhooks.payload.IntegrationDeletePayload;
-import org.discordbots.webhooks.payload.TestPayload;
-import org.discordbots.webhooks.payload.VoteCreatePayload;
+import gg.top.webhooks.eclipsejetty.TopggWebhooks;
+import gg.top.webhooks.payload.IntegrationCreatePayload;
+import gg.top.webhooks.payload.IntegrationDeletePayload;
+import gg.top.webhooks.payload.TestPayload;
+import gg.top.webhooks.payload.VoteCreatePayload;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-public class Webhooks extends DBLWebhooks {
+public class Webhooks extends TopggWebhooks {
   public Webhooks() {
     super(System.getenv("TOPGG_WEBHOOK_SECRET"));
   }
@@ -335,11 +335,11 @@ context.addServlet(new ServletHolder(new Webhooks()), "/webhook");
 In your `Webhooks.java`:
 
 ```java
-import org.discordbots.webhooks.springboot.DBLWebhooks;
-import org.discordbots.webhooks.payload.IntegrationCreatePayload;
-import org.discordbots.webhooks.payload.IntegrationDeletePayload;
-import org.discordbots.webhooks.payload.TestPayload;
-import org.discordbots.webhooks.payload.VoteCreatePayload;
+import gg.top.webhooks.springboot.TopggWebhooks;
+import gg.top.webhooks.payload.IntegrationCreatePayload;
+import gg.top.webhooks.payload.IntegrationDeletePayload;
+import gg.top.webhooks.payload.TestPayload;
+import gg.top.webhooks.payload.VoteCreatePayload;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -349,7 +349,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class Webhooks extends DBLWebhooks<String> {
+public class Webhooks extends TopggWebhooks<String> {
   public Webhooks() {
     super(System.getenv("TOPGG_WEBHOOK_SECRET"));
   }
