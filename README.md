@@ -39,7 +39,7 @@ Add the following line to the `dependencies` section of your `pom.xml`:
 
 ## Capabilities
 
-This library provides several capabilities that can be enabled/disabled, such as:
+This SDK provides several capabilities that can be enabled/disabled, such as:
 
 - **`jdaWrapper`**: Additional wrappers for working with [JDA](https://github.com/discord-jda/JDA).
 - **`discord4jWrapper`**: Additional wrappers for working with [Discord4J](https://github.com/Discord4J/Discord4J).
