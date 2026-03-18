@@ -15,8 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TopggSpringBootWebhookTests {
-  private static final String SECRET = System.getenv("TOPGG_WEBHOOK_SECRET");
-  private static final String TRACE = "trace";
   private static Mocks MOCKS;
 
   @Autowired private MockMvc mvc;
@@ -30,11 +28,11 @@ public class TopggSpringBootWebhookTests {
     mvc.perform(
             MockMvcRequestBuilders.post("/webhook")
                 .content(payload)
-                .header("x-topgg-signature", Mocks.signature(SECRET, payload))
-                .header("x-topgg-trace", TRACE)
+                .header("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload))
+                .header("x-topgg-trace", Mocks.TRACE)
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(MockMvcResultMatchers.status().is(200))
-        .andExpect(MockMvcResultMatchers.content().string("sb:" + name + "," + TRACE));
+        .andExpect(MockMvcResultMatchers.content().string("sb:" + name + "," + Mocks.TRACE));
   }
 
   @Test

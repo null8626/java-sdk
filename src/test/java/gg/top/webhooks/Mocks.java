@@ -11,6 +11,9 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Mocks {
+  public static final String SECRET = "testsecret1234";
+  public static final String TRACE = "trace";
+
   public final String integrationCreatePayload;
   public final String integrationDeletePayload;
   public final String testPayload;

@@ -22,8 +22,6 @@ public class TopggDropwizardWebhookTests {
       new DropwizardAppExtension<>(
           CustomServer.class, ResourceHelpers.resourceFilePath("dropwizard-test-config.yml"));
 
-  private static final String SECRET = System.getenv("TOPGG_WEBHOOK_SECRET");
-  private static final String TRACE = "trace";
   private static Mocks MOCKS;
 
   @BeforeAll
@@ -38,12 +36,12 @@ public class TopggDropwizardWebhookTests {
             .target(String.format("http://localhost:%d/webhook", APP.getLocalPort()))
             .request()
             .header("Content-Type", "application/json")
-            .header("x-topgg-signature", Mocks.signature(SECRET, payload))
-            .header("x-topgg-trace", TRACE)
+            .header("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload))
+            .header("x-topgg-trace", Mocks.TRACE)
             .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 
     Assertions.assertEquals(200, response.getStatus());
-    Assertions.assertEquals("dw:" + name + "," + TRACE, response.readEntity(String.class));
+    Assertions.assertEquals("dw:" + name + "," + Mocks.TRACE, response.readEntity(String.class));
   }
 
   @Test

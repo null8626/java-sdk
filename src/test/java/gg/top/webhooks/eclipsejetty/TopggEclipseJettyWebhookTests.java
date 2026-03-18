@@ -21,8 +21,6 @@ import org.junit.jupiter.api.Test;
 public class TopggEclipseJettyWebhookTests {
   private static Server SERVER = null;
 
-  private static final String SECRET = System.getenv("TOPGG_WEBHOOK_SECRET");
-  private static final String TRACE = "trace";
   private static Mocks MOCKS;
 
   @BeforeAll
@@ -47,8 +45,8 @@ public class TopggEclipseJettyWebhookTests {
 
     connection.setRequestMethod("POST");
     connection.setRequestProperty("Content-Type", "application/json");
-    connection.setRequestProperty("x-topgg-signature", Mocks.signature(SECRET, payload));
-    connection.setRequestProperty("x-topgg-trace", TRACE);
+    connection.setRequestProperty("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload));
+    connection.setRequestProperty("x-topgg-trace", Mocks.TRACE);
     connection.setDoOutput(true);
 
     try (final OutputStream outputStream = connection.getOutputStream()) {
@@ -68,7 +66,7 @@ public class TopggEclipseJettyWebhookTests {
         response.append(responseLine.trim());
       }
 
-      Assertions.assertEquals("ej:" + name + "," + TRACE, response.toString());
+      Assertions.assertEquals("ej:" + name + "," + Mocks.TRACE, response.toString());
     }
   }
 
