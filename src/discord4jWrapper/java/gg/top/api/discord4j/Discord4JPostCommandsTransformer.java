@@ -9,7 +9,7 @@ import java.util.concurrent.CompletionStage;
 /**
  * A PostCommandsTransformer implementation tailored for Discord4J bots.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */

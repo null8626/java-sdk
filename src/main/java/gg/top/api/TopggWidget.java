@@ -6,7 +6,7 @@ import gg.top.api.entity.ProjectType;
 /**
  * A Top.gg widget URL generator.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */

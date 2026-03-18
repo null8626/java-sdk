@@ -6,7 +6,7 @@ import java.time.OffsetDateTime;
 /**
  * A brief information of a project's vote.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */

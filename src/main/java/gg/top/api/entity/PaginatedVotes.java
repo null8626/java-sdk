@@ -7,7 +7,7 @@ import java.util.concurrent.CompletionStage;
 /**
  * A paginated list of a project's vote information.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -44,8 +44,6 @@ public class PaginatedVotes {
    * Tries to advance to the next page.
    *
    * @return CompletionStage&lt;PaginatedVotes&gt; The next page of votes.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
-   *     API.
    * @since 1.0.0
    */
   public CompletionStage<PaginatedVotes> next() {

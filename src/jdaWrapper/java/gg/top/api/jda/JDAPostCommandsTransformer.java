@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 /**
  * A PostCommandsTransformer implementation tailored for JDA bots.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -21,7 +21,7 @@ public class JDAPostCommandsTransformer implements PostCommandsTransformer {
   /**
    * Creates a new JDA post commands transformer instance.
    *
-   * @param client The JDA reference to use.
+   * @param jda The JDA reference to use.
    * @since 1.0.0
    */
   public JDAPostCommandsTransformer(final JDA jda) {

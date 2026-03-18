@@ -10,7 +10,7 @@ version = ver
 description = 'The community-maintained Java SDK for Top.gg.'
 
 if (JavaVersion.current() < JavaVersion.VERSION_17) {
-  throw new GradleException('Top.gg\'s Java SDK requires Java 17 or later. Java ${JavaVersion.current()} is not supported.')
+  throw new GradleException("Top.gg\'s Java SDK requires Java 17 or later. Java ${JavaVersion.current()} is not supported.")
 }
 
 repositories {
@@ -32,7 +32,6 @@ configurations {
   eclipseJettyWebhooksImplementation.extendsFrom webhooksImplementation
   springBootWebhooksImplementation.extendsFrom webhooksImplementation
 
-
   testImplementation.extendsFrom dropwizardWebhooksImplementation
   testImplementation.extendsFrom eclipseJettyWebhooksImplementation
   testImplementation.extendsFrom springBootWebhooksImplementation
@@ -45,6 +44,7 @@ test {
 }
 
 java {
+  withJavadocJar()
   withSourcesJar()
 
   registerFeature('jdaWrapper') {
@@ -85,6 +85,30 @@ java {
 
     capability('gg.top', 'springBootWebhooks', ver)
   }
+
+  javadoc {
+    title = '<h1>Top.gg Java SDK</h1>'
+
+    options.bottom = '<i>Copyright &#169; 2018-2026 Top.gg. All Rights Reserved.</i>'
+    options.encoding = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+    options.addBooleanOption('html5', true)
+
+    source += sourceSets.jdaWrapper.allJava
+    source += sourceSets.discord4jWrapper.allJava
+    source += sourceSets.dropwizardWebhooks.allJava
+    source += sourceSets.eclipseJettyWebhooks.allJava
+    source += sourceSets.springBootWebhooks.allJava
+    source += sourceSets.webhooks.allJava
+
+    classpath += sourceSets.jdaWrapper.compileClasspath
+    classpath += sourceSets.discord4jWrapper.compileClasspath
+    classpath += sourceSets.dropwizardWebhooks.compileClasspath
+    classpath += sourceSets.eclipseJettyWebhooks.compileClasspath
+    classpath += sourceSets.springBootWebhooks.compileClasspath
+    classpath += sourceSets.webhooks.compileClasspath
+  }
 }
 
 publishing {
@@ -100,13 +124,13 @@ publishing {
         name = 'SDK'
         description = 'The community-maintained Java SDK for Top.gg.'
         url = 'https://github.com/top-gg-community/java-sdk'
-        inceptionYear = '2020'
+        inceptionYear = '2018'
         
         licenses {
           license {
             name = 'Apache License 2.0'
             distribution = 'repo'
-            url = 'https://github.com/top-gg-community/java-sdk/blob/$ver/LICENSE'
+            url = "https://github.com/top-gg-community/java-sdk/blob/$ver/LICENSE"
           }
         }
         
@@ -220,4 +244,8 @@ tasks.register('format', JavaExec) {
 
 tasks.withType(JavaCompile) {
   options.compilerArgs << '-Xlint:deprecation'
+}
+
+tasks.withType(Javadoc) {
+  options.memberLevel = JavadocMemberLevel.PUBLIC
 }

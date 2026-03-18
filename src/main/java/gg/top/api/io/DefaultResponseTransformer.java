@@ -7,7 +7,8 @@ import okhttp3.Response;
 /**
  * A generic JSON response transformer.
  *
- * @author null8626 & Top.gg
+ * @param <E> The target JSON deserializable class.
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -33,8 +34,8 @@ public class DefaultResponseTransformer<E> implements ResponseTransformer<E> {
    * @param response The HTTP response with a parsable body.
    * @return E The deserialized object.
    * @throws IOException Unable to parse HTTP response body.
-   * @throws JsonSyntaxException Unable to deserialize the HTTP response body to the specified
-   *     class.
+   * @throws com.google.gson.JsonSyntaxException Unable to deserialize the HTTP response body to the
+   *     specified class.
    * @since 1.0.0
    */
   @Override
