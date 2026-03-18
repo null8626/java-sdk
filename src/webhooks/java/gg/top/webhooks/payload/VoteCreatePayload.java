@@ -1,11 +1,9 @@
 package gg.top.webhooks.payload;
 
-import java.time.OffsetDateTime;
-
 import com.google.gson.annotations.SerializedName;
-
 import gg.top.webhooks.entity.PartialProject;
 import gg.top.webhooks.entity.User;
+import java.time.OffsetDateTime;
 
 /**
  * A 'vote.create' webhook payload. Fires when a user votes for your project.
@@ -40,7 +38,8 @@ public class VoteCreatePayload {
   }
 
   /**
-   * The number of votes this vote counted for. This is a rounded integer value which determines how many points this individual vote was worth.
+   * The number of votes this vote counted for. This is a rounded integer value which determines how
+   * many points this individual vote was worth.
    *
    * @return int
    * @since 1.0.0

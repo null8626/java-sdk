@@ -1,10 +1,10 @@
 package gg.top.webhooks.eclipsejetty;
 
-import jakarta.servlet.http.HttpServletResponse;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * An Eclipse Jetty-based Top.gg webhook event listener.
@@ -19,7 +19,8 @@ public interface TopggWebhookEventListener {
    *
    * @param response The response for this request.
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @since 1.0.0
    */
   default void onIntegrationCreate(
@@ -34,7 +35,8 @@ public interface TopggWebhookEventListener {
    *
    * @param response The response for this request.
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @since 1.0.0
    */
   default void onIntegrationDelete(
@@ -49,7 +51,8 @@ public interface TopggWebhookEventListener {
    *
    * @param response The response for this request.
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @since 1.0.0
    */
   default void onTest(
@@ -62,7 +65,8 @@ public interface TopggWebhookEventListener {
    *
    * @param response The response for this request.
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @since 1.0.0
    */
   default void onVoteCreate(

@@ -1,12 +1,12 @@
 package gg.top.webhooks.payload;
 
 import com.google.gson.annotations.SerializedName;
-
 import gg.top.webhooks.entity.PartialProject;
 import gg.top.webhooks.entity.User;
 
 /**
- * An 'integration.create' webhook payload. Fires when a user has connected to your webhook integration.
+ * An 'integration.create' webhook payload. Fires when a user has connected to your webhook
+ * integration.
  *
  * @author null8626 & Top.gg
  * @version 1.0.0

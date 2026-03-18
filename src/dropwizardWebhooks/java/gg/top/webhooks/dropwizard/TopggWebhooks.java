@@ -1,29 +1,11 @@
 package gg.top.webhooks.dropwizard;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HexFormat;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.Payload;
@@ -38,6 +20,21 @@ import jakarta.ws.rs.container.Suspended;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HexFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * A Dropwizard-based Top.gg webhook manager.
@@ -59,7 +56,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
    * Creates a new Dropwizard-based webhook manager instance.
    *
    * @param secret The secret to use to authorize external requests.
-   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults
+   *     to a 100-thread thread pool.
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
@@ -146,7 +144,10 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
 
       hmac.init(key);
 
-      body = new String(ByteStreams.limit(request.getInputStream(), 2 * 1024 * 1024).readAllBytes(), StandardCharsets.UTF_8);
+      body =
+          new String(
+              ByteStreams.limit(request.getInputStream(), 2 * 1024 * 1024).readAllBytes(),
+              StandardCharsets.UTF_8);
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
@@ -170,18 +171,33 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
           default -> Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
         };
       } catch (final Throwable ignored) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error").build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+            .entity("Internal Server Error")
+            .build();
       }
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
       throw new WebApplicationException("Unable to find an HMAC SHA-256 algorithm", error);
     } catch (final JsonSyntaxException error) {
-      logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+      logger.warning(
+          String.format(
+              "Unable to parse Top.gg webhook payload. Please report this bug to the SDK"
+                  + " maintainers.\n"
+                  + "Cause: %s\n"
+                  + "--- BEGIN BODY DUMP ---\n"
+                  + "%s\n"
+                  + "--- END BODY DUMP ---",
+              error.getMessage(), body));
 
       return Response.status(Response.Status.NO_CONTENT).build();
-    } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException | IOException ignored) {
+    } catch (final ArrayIndexOutOfBoundsException
+        | AssertionError
+        | JsonIOException
+        | IOException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
     } catch (final Throwable ignored) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error").build();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+          .entity("Internal Server Error")
+          .build();
     }
   }
 
@@ -195,9 +211,16 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
    */
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  public void dispatch(@Context final HttpServletRequest request, @Suspended final AsyncResponse response) throws WebApplicationException {
+  public void dispatch(
+      @Context final HttpServletRequest request, @Suspended final AsyncResponse response)
+      throws WebApplicationException {
     response.setTimeout(timeoutValue, timeoutUnit);
-    response.setTimeoutHandler(response2 -> response2.resume(Response.status(Response.Status.REQUEST_TIMEOUT).entity("Request timed out").build()));
+    response.setTimeoutHandler(
+        response2 ->
+            response2.resume(
+                Response.status(Response.Status.REQUEST_TIMEOUT)
+                    .entity("Request timed out")
+                    .build()));
 
     executor.submit(() -> response.resume(dispatch(request)));
   }

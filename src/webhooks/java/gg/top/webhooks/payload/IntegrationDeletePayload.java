@@ -3,7 +3,8 @@ package gg.top.webhooks.payload;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * An 'integration.delete' webhook payload. Fires when a user has disconnected from your webhook integration.
+ * An 'integration.delete' webhook payload. Fires when a user has disconnected from your webhook
+ * integration.
  *
  * @author null8626 & Top.gg
  * @version 1.0.0

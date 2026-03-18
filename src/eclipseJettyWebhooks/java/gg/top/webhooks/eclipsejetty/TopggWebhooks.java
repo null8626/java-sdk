@@ -1,5 +1,23 @@
 package gg.top.webhooks.eclipsejetty;
 
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import gg.top.webhooks.payload.IntegrationCreatePayload;
+import gg.top.webhooks.payload.IntegrationDeletePayload;
+import gg.top.webhooks.payload.Payload;
+import gg.top.webhooks.payload.TestPayload;
+import gg.top.webhooks.payload.VoteCreatePayload;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.AsyncEvent;
+import jakarta.servlet.AsyncListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
@@ -13,29 +31,8 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
-import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import gg.top.webhooks.payload.IntegrationCreatePayload;
-import gg.top.webhooks.payload.IntegrationDeletePayload;
-import gg.top.webhooks.payload.Payload;
-import gg.top.webhooks.payload.TestPayload;
-import gg.top.webhooks.payload.VoteCreatePayload;
-import jakarta.servlet.AsyncContext;
-import jakarta.servlet.AsyncEvent;
-import jakarta.servlet.AsyncListener;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * An Eclipse Jetty-based Top.gg webhook manager.
@@ -56,7 +53,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    * Creates a new Eclipse Jetty-based webhook manager instance.
    *
    * @param secret The secret to use to authorize external requests.
-   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults
+   *     to a 100-thread thread pool.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
    * @since 1.0.0
    */
@@ -74,7 +72,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    * Creates a new Eclipse Jetty-based webhook manager instance.
    *
    * @param secret The secret to use to authorize external requests.
-   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults
+   *     to a 100-thread thread pool.
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
@@ -123,7 +122,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
   }
 
   @SuppressWarnings("UseSpecificCatch")
-  private void dispatch(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+  private void dispatch(final HttpServletRequest request, final HttpServletResponse response)
+      throws IOException, ServletException {
     String body = "";
 
     try {
@@ -151,7 +151,10 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
 
       hmac.init(key);
 
-      body = new String(ByteStreams.limit(request.getInputStream(), 2 * 1024 * 1024).readAllBytes(), StandardCharsets.UTF_8);
+      body =
+          new String(
+              ByteStreams.limit(request.getInputStream(), 2 * 1024 * 1024).readAllBytes(),
+              StandardCharsets.UTF_8);
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
@@ -186,7 +189,15 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
         response.getWriter().write("Internal Server Error");
       }
     } catch (final JsonSyntaxException error) {
-      logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+      logger.warning(
+          String.format(
+              "Unable to parse Top.gg webhook payload. Please report this bug to the SDK"
+                  + " maintainers.\n"
+                  + "Cause: %s\n"
+                  + "--- BEGIN BODY DUMP ---\n"
+                  + "%s\n"
+                  + "--- END BODY DUMP ---",
+              error.getMessage(), body));
 
       response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
@@ -216,42 +227,48 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
 
     context.setTimeout(timeout);
 
-    context.addListener(new AsyncListener() {
-      @Override
-      public void onStartAsync(final AsyncEvent event) {}
+    context.addListener(
+        new AsyncListener() {
+          @Override
+          public void onStartAsync(final AsyncEvent event) {}
 
-      @Override
-      public void onError(final AsyncEvent event) throws IOException {
-        final HttpServletResponse eventResponse = (HttpServletResponse)event.getAsyncContext().getResponse();
+          @Override
+          public void onError(final AsyncEvent event) throws IOException {
+            final HttpServletResponse eventResponse =
+                (HttpServletResponse) event.getAsyncContext().getResponse();
 
-        eventResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        eventResponse.getWriter().write("Internal Server Error");
+            eventResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            eventResponse.getWriter().write("Internal Server Error");
 
-        event.getAsyncContext().complete();
-      }
+            event.getAsyncContext().complete();
+          }
 
-      @Override
-      public void onComplete(final AsyncEvent event) {}
+          @Override
+          public void onComplete(final AsyncEvent event) {}
 
-      @Override
-      public void onTimeout(final AsyncEvent event) throws IOException {
-        final HttpServletResponse eventResponse = (HttpServletResponse)event.getAsyncContext().getResponse();
+          @Override
+          public void onTimeout(final AsyncEvent event) throws IOException {
+            final HttpServletResponse eventResponse =
+                (HttpServletResponse) event.getAsyncContext().getResponse();
 
-        eventResponse.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
-        eventResponse.getWriter().write("Request timed out");
+            eventResponse.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
+            eventResponse.getWriter().write("Request timed out");
 
-        event.getAsyncContext().complete();
-      }
-    });
+            event.getAsyncContext().complete();
+          }
+        });
 
-    executor.submit(() -> {
-      try {
-        dispatch(request, response);
-      } catch (final IOException | ServletException error) {
-        logger.log(Level.SEVERE, String.format("Unable to process payload request: %s", error.getMessage()));
-      } finally {
-        context.complete();
-      }
-    });
+    executor.submit(
+        () -> {
+          try {
+            dispatch(request, response);
+          } catch (final IOException | ServletException error) {
+            logger.log(
+                Level.SEVERE,
+                String.format("Unable to process payload request: %s", error.getMessage()));
+          } finally {
+            context.complete();
+          }
+        });
   }
 }

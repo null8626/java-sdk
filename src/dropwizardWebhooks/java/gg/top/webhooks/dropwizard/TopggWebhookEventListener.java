@@ -1,10 +1,10 @@
 package gg.top.webhooks.dropwizard;
 
-import jakarta.ws.rs.core.Response;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
+import jakarta.ws.rs.core.Response;
 
 /**
  * A Dropwizard-based Top.gg webhook event listener.
@@ -18,7 +18,8 @@ public interface TopggWebhookEventListener {
    * Fires when a user has connected to your webhook integration.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return Response The response for this request.
    * @since 1.0.0
    */
@@ -30,7 +31,8 @@ public interface TopggWebhookEventListener {
    * Fires when a user has disconnected from your webhook integration.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return Response The response for this request.
    * @since 1.0.0
    */
@@ -42,7 +44,8 @@ public interface TopggWebhookEventListener {
    * Fires when a test webhook was sent from the dashboard.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return Response The response for this request.
    * @since 1.0.0
    */
@@ -54,7 +57,8 @@ public interface TopggWebhookEventListener {
    * Fires when a user votes for your project.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return Response The response for this request.
    * @since 1.0.0
    */

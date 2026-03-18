@@ -19,7 +19,8 @@ public interface TopggWebhookEventListener<R> {
    * Fires when a user has connected to your webhook integration.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return ResponseEntity&lt;R&gt; The response for this request.
    * @since 1.0.0
    */
@@ -32,7 +33,8 @@ public interface TopggWebhookEventListener<R> {
    * Fires when a user has disconnected from your webhook integration.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return ResponseEntity&lt;R&gt; The response for this request.
    * @since 1.0.0
    */
@@ -45,7 +47,8 @@ public interface TopggWebhookEventListener<R> {
    * Fires when a test webhook was sent from the dashboard.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return ResponseEntity&lt;R&gt; The response for this request.
    * @since 1.0.0
    */
@@ -57,7 +60,8 @@ public interface TopggWebhookEventListener<R> {
    * Fires when a user votes for your project.
    *
    * @param payload The webhook payload.
-   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with Top.gg support.
+   * @param trace The payload's x-topgg-trace header for debugging and correlating requests with
+   *     Top.gg support.
    * @return ResponseEntity&lt;R&gt; The response for this request.
    * @since 1.0.0
    */

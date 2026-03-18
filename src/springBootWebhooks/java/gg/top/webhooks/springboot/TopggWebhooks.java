@@ -1,5 +1,15 @@
 package gg.top.webhooks.springboot;
 
+import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import gg.top.webhooks.payload.IntegrationCreatePayload;
+import gg.top.webhooks.payload.IntegrationDeletePayload;
+import gg.top.webhooks.payload.Payload;
+import gg.top.webhooks.payload.TestPayload;
+import gg.top.webhooks.payload.VoteCreatePayload;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -9,25 +19,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.async.DeferredResult;
-
-import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-
-import gg.top.webhooks.payload.IntegrationCreatePayload;
-import gg.top.webhooks.payload.IntegrationDeletePayload;
-import gg.top.webhooks.payload.Payload;
-import gg.top.webhooks.payload.TestPayload;
-import gg.top.webhooks.payload.VoteCreatePayload;
 
 /**
  * A Spring Boot-based Top.gg webhook manager.
@@ -48,7 +44,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * Creates a new Spring Boot-based webhook manager instance.
    *
    * @param secret The secret to use to authorize external requests.
-   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults
+   *     to a 100-thread thread pool.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
    * @since 1.0.0
    */
@@ -66,7 +63,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * Creates a new Spring Boot-based webhook manager instance.
    *
    * @param secret The secret to use to authorize external requests.
-   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults
+   *     to a 100-thread thread pool.
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
@@ -115,7 +113,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
   }
 
   @SuppressWarnings("UseSpecificCatch")
-  private ResponseEntity<R> dispatchSync(final String body, final String signatureHeader, final String trace) {
+  private ResponseEntity<R> dispatchSync(
+      final String body, final String signatureHeader, final String trace) {
     try {
       final HashMap<String, String> parsedSignature =
           Arrays.stream(signatureHeader.split(","))
@@ -160,7 +159,15 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
       }
     } catch (final JsonSyntaxException error) {
-      logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+      logger.warning(
+          String.format(
+              "Unable to parse Top.gg webhook payload. Please report this bug to the SDK"
+                  + " maintainers.\n"
+                  + "Cause: %s\n"
+                  + "--- BEGIN BODY DUMP ---\n"
+                  + "%s\n"
+                  + "--- END BODY DUMP ---",
+              error.getMessage(), body));
 
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
@@ -174,15 +181,17 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * Tries to process a payload request and dispatch it to the listeners.
    *
    * @param body The HTTP request body that comes from @RequestBody.
-   * @param signatureHeader The HTTP request header that comes from @RequestHeader("x-topgg-signature"). Used to verify requests.
-   * @param trace The HTTP request header that comes from @RequestHeader("x-topgg-trace"). Used to debug and correlate requests with Top.gg support.
+   * @param signatureHeader The HTTP request header that comes
+   *     from @RequestHeader("x-topgg-signature"). Used to verify requests.
+   * @param trace The HTTP request header that comes from @RequestHeader("x-topgg-trace"). Used to
+   *     debug and correlate requests with Top.gg support.
    * @return DeferredResult&lt;ResponseEntity&lt;R&gt;&gt; The deferred response for this request.
    * @since 1.0.0
    */
-  protected DeferredResult<ResponseEntity<R>> dispatch(final String body, final String signatureHeader, final String trace) {
-    final DeferredResult<ResponseEntity<R>> result = new DeferredResult<>(
-      timeout, ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build()
-    );
+  protected DeferredResult<ResponseEntity<R>> dispatch(
+      final String body, final String signatureHeader, final String trace) {
+    final DeferredResult<ResponseEntity<R>> result =
+        new DeferredResult<>(timeout, ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).build());
 
     executor.submit(() -> result.setResult(dispatchSync(body, signatureHeader, trace)));
 
