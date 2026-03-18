@@ -170,11 +170,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
           case "vote.create" -> onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
           default -> Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
         };
-      } catch (final Throwable ignored) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
-            .build();
-      }
+      } catch (final Throwable ignored) {}
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
       throw new WebApplicationException("Unable to find an HMAC SHA-256 algorithm", error);
     } catch (final JsonSyntaxException error) {
@@ -194,11 +190,11 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
         | JsonIOException
         | IOException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
-    } catch (final Throwable ignored) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-          .entity("Internal Server Error")
-          .build();
-    }
+    } catch (final Throwable ignored) {}
+
+    return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+        .entity("Internal Server Error")
+        .build();
   }
 
   /**

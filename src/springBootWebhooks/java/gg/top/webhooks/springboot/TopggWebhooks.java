@@ -155,9 +155,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
           case "vote.create" -> onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
           default -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         };
-      } catch (final Throwable ignored) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-      }
+      } catch (final Throwable ignored) {}
     } catch (final JsonSyntaxException error) {
       logger.warning(
           String.format(
@@ -172,9 +170,9 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    } catch (final Throwable ignored) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+    } catch (final Throwable ignored) {}
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
   }
 
   /**

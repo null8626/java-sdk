@@ -184,10 +184,9 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
             response.getWriter().write("Bad Request");
           }
         }
-      } catch (final Throwable ignored) {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.getWriter().write("Internal Server Error");
-      }
+
+        return;
+      } catch (final Throwable ignored) {}
     } catch (final JsonSyntaxException error) {
       logger.warning(
           String.format(
@@ -200,15 +199,19 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
               error.getMessage(), body));
 
       response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
+      return;
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
       throw new ServletException("Unable to find an HMAC SHA-256 algorithm", error);
     } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().write("Bad Request");
-    } catch (final Throwable ignored) {
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.getWriter().write("Internal Server Error");
-    }
+
+      return;
+    } catch (final Throwable ignored) {}
+
+    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    response.getWriter().write("Internal Server Error");
   }
 
   /**
