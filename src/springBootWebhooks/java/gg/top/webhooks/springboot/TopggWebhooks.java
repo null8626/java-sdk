@@ -28,7 +28,8 @@ import org.springframework.web.context.request.async.DeferredResult;
 /**
  * A Spring Boot-based Top.gg webhook manager.
  *
- * @author null8626 & Top.gg
+ * @param <R> The response entity.
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -155,7 +156,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
           case "vote.create" -> onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
           default -> ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         };
-      } catch (final Throwable ignored) {}
+      } catch (final Throwable ignored) {
+      }
     } catch (final JsonSyntaxException error) {
       logger.warning(
           String.format(
@@ -170,7 +172,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    } catch (final Throwable ignored) {}
+    } catch (final Throwable ignored) {
+    }
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
   }

@@ -37,7 +37,7 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * An Eclipse Jetty-based Top.gg webhook manager.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -186,7 +186,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
         }
 
         return;
-      } catch (final Throwable ignored) {}
+      } catch (final Throwable ignored) {
+      }
     } catch (final JsonSyntaxException error) {
       logger.warning(
           String.format(
@@ -208,7 +209,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
       response.getWriter().write("Bad Request");
 
       return;
-    } catch (final Throwable ignored) {}
+    } catch (final Throwable ignored) {
+    }
 
     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     response.getWriter().write("Internal Server Error");

@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 /**
  * A 'vote.create' webhook payload. Fires when a user votes for your project.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */

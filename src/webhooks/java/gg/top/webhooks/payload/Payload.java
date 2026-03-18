@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 /**
  * A Top.gg webhook payload.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -29,6 +29,9 @@ public class Payload {
   /**
    * Tries to deserialize the payload's data.
    *
+   * @param <T> The target JSON deserializable class.
+   * @param gson The Gson instance to use.
+   * @param cls The target JSON deserializable class.
    * @return T The deserialized object.
    * @throws JsonSyntaxException Unable to deserialize the payload's data to the specified class.
    * @since 1.0.0

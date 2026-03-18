@@ -39,7 +39,7 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * A Dropwizard-based Top.gg webhook manager.
  *
- * @author null8626 & Top.gg
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
@@ -170,7 +170,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
           case "vote.create" -> onVoteCreate(payload.getData(gson, VoteCreatePayload.class), trace);
           default -> Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
         };
-      } catch (final Throwable ignored) {}
+      } catch (final Throwable ignored) {
+      }
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
       throw new WebApplicationException("Unable to find an HMAC SHA-256 algorithm", error);
     } catch (final JsonSyntaxException error) {
@@ -190,7 +191,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
         | JsonIOException
         | IOException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
-    } catch (final Throwable ignored) {}
+    } catch (final Throwable ignored) {
+    }
 
     return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
         .entity("Internal Server Error")

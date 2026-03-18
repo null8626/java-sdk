@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
 /**
  * A Spring Boot-based Top.gg webhook event listener.
  *
- * @author null8626 & Top.gg
+ * @param <R> The response entity.
+ * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
  */
