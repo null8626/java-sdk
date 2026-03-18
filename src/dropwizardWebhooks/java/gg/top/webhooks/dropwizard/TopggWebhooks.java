@@ -8,6 +8,9 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -27,36 +30,95 @@ import gg.top.webhooks.payload.Payload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.container.AsyncResponse;
+import jakarta.ws.rs.container.Suspended;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * A Dropwizard-based Top.gg webhook manager.
+ *
+ * @author null8626 & Top.gg
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public abstract class TopggWebhooks implements TopggWebhookEventListener {
   private static final Logger logger = Logger.getLogger(TopggWebhooks.class.getName());
 
   private byte[] secret;
+  private final ExecutorService executor;
+  private long timeoutValue;
+  private TimeUnit timeoutUnit;
   private final Gson gson;
 
-  public TopggWebhooks(final String secret) {
+  /**
+   * Creates a new Dropwizard-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret, final ExecutorService executor) {
     this.secret = secret.getBytes(StandardCharsets.UTF_8);
-    this.gson =
+    this.executor = executor;
+
+    timeoutValue = 5;
+    timeoutUnit = TimeUnit.SECONDS;
+
+    gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
             .create();
   }
 
+  /**
+   * Creates a new Dropwizard-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret) {
+    this(secret, Executors.newFixedThreadPool(100));
+  }
+
+  /**
+   * Retrieves the secret used to authorize external requests.
+   *
+   * @return String The secret used to authorize external requests.
+   * @since 1.0.0
+   */
   public String getSecret() {
     return new String(secret, StandardCharsets.UTF_8);
   }
 
+  /**
+   * Sets the secret to use to authorize external requests.
+   *
+   * @param newSecret The new secret to use to authorize external requests.
+   * @since 1.0.0
+   */
   public void setSecret(final String newSecret) {
     secret = newSecret.getBytes(StandardCharsets.UTF_8);
   }
 
-  @POST
+  /**
+   * Sets the timeout for reading payloads.
+   *
+   * @param value The timeout duration value.
+   * @param unit The timeout duration unit.
+   * @since 1.0.0
+   */
+  public void setTimeout(final long value, final TimeUnit unit) {
+    timeoutValue = value;
+    timeoutUnit = unit;
+  }
+
   @SuppressWarnings("UseSpecificCatch")
-  public Response handle(@Context HttpServletRequest request) throws WebApplicationException {
+  private Response dispatch(final HttpServletRequest request) {
     String body = "";
 
     try {
@@ -108,26 +170,35 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
           default -> Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
         };
       } catch (final Throwable ignored) {
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error")
-            .build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error").build();
       }
-    } catch (final NoSuchAlgorithmException
-        | InvalidKeyException
-        | ArrayIndexOutOfBoundsException
-        | AssertionError
-        | JsonSyntaxException
-        | JsonIOException
-        | IOException error) {
-      if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
-        throw new WebApplicationException("Unable to find HMAC SHA-256 algorithm", error);
-      } else if (error instanceof JsonSyntaxException) {
-        logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+    } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
+      throw new WebApplicationException("Unable to find an HMAC SHA-256 algorithm", error);
+    } catch (final JsonSyntaxException error) {
+      logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
 
-        return Response.status(Response.Status.NO_CONTENT).build();
-      }
-
+      return Response.status(Response.Status.NO_CONTENT).build();
+    } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException | IOException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
+    } catch (final Throwable ignored) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Internal Server Error").build();
     }
+  }
+
+  /**
+   * Tries to process a payload request and dispatch it to the listeners.
+   *
+   * @param request The HTTP request.
+   * @param response The asynchronous HTTP response.
+   * @throws WebApplicationException Unable to find an HMAC SHA-256 algorithm.
+   * @since 1.0.0
+   */
+  @POST
+  @Consumes(MediaType.APPLICATION_JSON)
+  public void dispatch(@Context final HttpServletRequest request, @Suspended final AsyncResponse response) throws WebApplicationException {
+    response.setTimeout(timeoutValue, timeoutUnit);
+    response.setTimeoutHandler(response2 -> response2.resume(Response.status(Response.Status.REQUEST_TIMEOUT).entity("Request timed out").build()));
+
+    executor.submit(() -> response.resume(dispatch(request)));
   }
 }

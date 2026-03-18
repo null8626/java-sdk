@@ -7,6 +7,13 @@ import com.google.gson.annotations.SerializedName;
 import gg.top.webhooks.entity.PartialProject;
 import gg.top.webhooks.entity.User;
 
+/**
+ * A 'vote.create' webhook payload. Fires when a user votes for your project.
+ *
+ * @author null8626 & Top.gg
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class VoteCreatePayload {
   private String id;
 
@@ -22,26 +29,62 @@ public class VoteCreatePayload {
 
   private User user;
 
+  /**
+   * The vote's ID.
+   *
+   * @return String
+   * @since 1.0.0
+   */
   public String getId() {
     return id;
   }
 
+  /**
+   * The number of votes this vote counted for. This is a rounded integer value which determines how many points this individual vote was worth.
+   *
+   * @return int
+   * @since 1.0.0
+   */
   public int getWeight() {
     return weight;
   }
 
+  /**
+   * When the vote was cast.
+   *
+   * @return OffsetDateTime
+   * @since 1.0.0
+   */
   public OffsetDateTime getVotedAt() {
     return votedAt;
   }
 
-  public OffsetDateTime getExpiredAt() {
+  /**
+   * When the vote expires and the user is required to vote again.
+   *
+   * @return OffsetDateTime
+   * @since 1.0.0
+   */
+  public OffsetDateTime getExpiresAt() {
     return expiresAt;
   }
 
+  /**
+   * The project that received this vote.
+   *
+   * @return PartialProject
+   * @since 1.0.0
+   */
   public PartialProject getProject() {
     return project;
   }
 
+  /**
+   * The user who voted for this project.
+   *
+   * @return User
+   * @since 1.0.0
+   */
   public User getUser() {
     return user;
   }

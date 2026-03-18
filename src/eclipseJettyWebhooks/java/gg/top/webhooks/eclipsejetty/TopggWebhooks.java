@@ -8,6 +8,9 @@ import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HexFormat;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -26,37 +29,101 @@ import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.Payload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
+import jakarta.servlet.AsyncContext;
+import jakarta.servlet.AsyncEvent;
+import jakarta.servlet.AsyncListener;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * An Eclipse Jetty-based Top.gg webhook manager.
+ *
+ * @author null8626 & Top.gg
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListener {
   private static final Logger logger = Logger.getLogger(TopggWebhooks.class.getName());
 
   private byte[] secret;
+  private final ExecutorService executor;
+  private final long timeout;
   private final Gson gson;
 
-  public TopggWebhooks(final String secret) {
+  /**
+   * Creates a new Eclipse Jetty-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret, final ExecutorService executor, final long timeout) {
     this.secret = secret.getBytes(StandardCharsets.UTF_8);
-    this.gson =
+    this.executor = executor;
+    this.timeout = timeout;
+    gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
             .create();
   }
 
+  /**
+   * Creates a new Eclipse Jetty-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @param executor The executor service to use to process payload requests concurrently. Defaults to a 100-thread thread pool.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret, final ExecutorService executor) {
+    this(secret, executor, 5000L);
+  }
+
+  /**
+   * Creates a new Eclipse Jetty-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret, final long timeout) {
+    this(secret, Executors.newFixedThreadPool(100), timeout);
+  }
+
+  /**
+   * Creates a new Eclipse Jetty-based webhook manager instance.
+   *
+   * @param secret The secret to use to authorize external requests.
+   * @since 1.0.0
+   */
+  public TopggWebhooks(final String secret) {
+    this(secret, 5000L);
+  }
+
+  /**
+   * Retrieves the secret used to authorize external requests.
+   *
+   * @return String The secret used to authorize external requests.
+   * @since 1.0.0
+   */
   public String getSecret() {
     return new String(secret, StandardCharsets.UTF_8);
   }
 
+  /**
+   * Sets the secret to use to authorize external requests.
+   *
+   * @param newSecret The new secret to use to authorize external requests.
+   * @since 1.0.0
+   */
   public void setSecret(final String newSecret) {
     secret = newSecret.getBytes(StandardCharsets.UTF_8);
   }
 
-  @Override
   @SuppressWarnings("UseSpecificCatch")
-  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-      throws IOException, ServletException {
+  private void dispatch(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
     String body = "";
 
     try {
@@ -90,7 +157,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
 
       if (!signature.equals(HexFormat.of().formatHex(digest))) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("Invalid Authorization");
+        response.getWriter().write("Unauthorized");
 
         return;
       }
@@ -118,23 +185,73 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.getWriter().write("Internal Server Error");
       }
-    } catch (final NoSuchAlgorithmException
-        | InvalidKeyException
-        | ArrayIndexOutOfBoundsException
-        | AssertionError
-        | JsonSyntaxException
-        | JsonIOException
-        | IOException error) {
-      if (error instanceof NoSuchAlgorithmException || error instanceof InvalidKeyException) {
-        throw new ServletException("Unable to find HMAC SHA-256 algorithm", error);
-      } else if (error instanceof JsonSyntaxException) {
-        logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
+    } catch (final JsonSyntaxException error) {
+      logger.warning(String.format("Unable to parse Top.gg webhook payload. Please report this bug to the SDK maintainers.\nCause: %s\n--- BEGIN BODY DUMP ---\n%s\n--- END BODY DUMP ---", error.getMessage(), body));
 
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-      } else {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.getWriter().write("Bad Request");
-      }
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
+      throw new ServletException("Unable to find an HMAC SHA-256 algorithm", error);
+    } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+      response.getWriter().write("Bad Request");
+    } catch (final Throwable ignored) {
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      response.getWriter().write("Internal Server Error");
     }
+  }
+
+  /**
+   * Tries to process a payload request and dispatch it to the listeners.
+   *
+   * @param request The HTTP request.
+   * @param response The HTTP response.
+   * @throws IOException Unable to write an HTTP response.
+   * @throws ServletException Unable to find an HMAC SHA-256 algorithm.
+   * @since 1.0.0
+   */
+  @Override
+  protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+      throws IOException, ServletException {
+    final AsyncContext context = request.startAsync();
+
+    context.setTimeout(timeout);
+
+    context.addListener(new AsyncListener() {
+      @Override
+      public void onStartAsync(final AsyncEvent event) {}
+
+      @Override
+      public void onError(final AsyncEvent event) throws IOException {
+        final HttpServletResponse eventResponse = (HttpServletResponse)event.getAsyncContext().getResponse();
+
+        eventResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        eventResponse.getWriter().write("Internal Server Error");
+
+        event.getAsyncContext().complete();
+      }
+
+      @Override
+      public void onComplete(final AsyncEvent event) {}
+
+      @Override
+      public void onTimeout(final AsyncEvent event) throws IOException {
+        final HttpServletResponse eventResponse = (HttpServletResponse)event.getAsyncContext().getResponse();
+
+        eventResponse.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
+        eventResponse.getWriter().write("Request timed out");
+
+        event.getAsyncContext().complete();
+      }
+    });
+
+    executor.submit(() -> {
+      try {
+        dispatch(request, response);
+      } catch (final IOException | ServletException error) {
+        logger.log(Level.SEVERE, String.format("Unable to process payload request: %s", error.getMessage()));
+      } finally {
+        context.complete();
+      }
+    });
   }
 }
