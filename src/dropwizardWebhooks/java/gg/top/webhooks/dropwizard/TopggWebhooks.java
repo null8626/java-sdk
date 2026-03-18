@@ -57,7 +57,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
    *
    * @param secret The secret to use to authorize external requests.
    * @param executor The executor service to use to process payload requests concurrently. Defaults
-   *     to a 100-thread thread pool.
+   *     to a 100-fixed thread pool.
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
