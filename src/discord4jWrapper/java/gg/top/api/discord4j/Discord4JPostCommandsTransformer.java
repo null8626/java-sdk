@@ -1,12 +1,10 @@
 package gg.top.api.discord4j;
 
-import java.util.concurrent.CompletionStage;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import discord4j.common.JacksonResources;
 import discord4j.core.DiscordClient;
 import gg.top.api.io.PostCommandsTransformer;
+import java.util.concurrent.CompletionStage;
 
 /**
  * A PostCommandsTransformer implementation tailored for Discord4J bots.
@@ -29,9 +27,11 @@ public class Discord4JPostCommandsTransformer implements PostCommandsTransformer
   }
 
   /**
-   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw
+   * JSON format.
    *
-   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in
+   *     the form of Discord API's raw JSON format.
    * @since 1.0.0
    */
   @Override

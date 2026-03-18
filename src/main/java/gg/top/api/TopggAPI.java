@@ -1,18 +1,9 @@
 package gg.top.api;
 
-import java.io.IOException;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.CompletionStage;
-
 import com.fatboyindustrial.gsonjavatime.OffsetDateTimeConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
-
 import gg.top.api.entity.PaginatedVotes;
 import gg.top.api.entity.PartialVote;
 import gg.top.api.entity.Project;
@@ -24,6 +15,13 @@ import gg.top.api.io.PostCommandsTransformer;
 import gg.top.api.io.RawPostCommandsTransformer;
 import gg.top.api.io.ResponseTransformer;
 import gg.top.api.io.UnsuccessfulHttpException;
+import java.io.IOException;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -92,7 +90,8 @@ public class TopggAPI {
    * Tries to get your project's information.
    *
    * @return CompletableFuture&lt;Project&gt; Your project's information.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<Project> getSelf() {
@@ -105,9 +104,11 @@ public class TopggAPI {
   /**
    * Tries to update the application commands list in your Discord bot's Top.gg page.
    *
-   * @param commands A list of your Discord bot's application commands in the form of an object that implements PostCommandsTransformer.
+   * @param commands A list of your Discord bot's application commands in the form of an object that
+   *     implements PostCommandsTransformer.
    * @return CompletableFuture&lt;Void&gt;
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<Void> postCommands(final PostCommandsTransformer commands) {
@@ -127,9 +128,11 @@ public class TopggAPI {
   /**
    * Tries to update the application commands list in your Discord bot's Top.gg page.
    *
-   * @param commands A list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * @param commands A list of your Discord bot's application commands in the form of Discord API's
+   *     raw JSON format.
    * @return CompletableFuture&lt;Void&gt;
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<Void> postCommands(final JsonArray commands) {
@@ -137,12 +140,15 @@ public class TopggAPI {
   }
 
   /**
-   * Tries to get the latest vote information of a user on your project. Returns null if the user has not voted.
+   * Tries to get the latest vote information of a user on your project. Returns null if the user
+   * has not voted.
    *
    * @param userSource The user's source.
    * @param id The user's ID.
-   * @return CompletableFuture&lt;PartialVote&gt; The latest vote information of a user on your project or null if the user has not voted.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @return CompletableFuture&lt;PartialVote&gt; The latest vote information of a user on your
+   *     project or null if the user has not voted.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<PartialVote> getVote(final UserSource userSource, final String id) {
@@ -172,8 +178,10 @@ public class TopggAPI {
    * Tries to get a cursor-based paginated list of votes for your project, ordered by creation date.
    *
    * @param since The earliest possible date for all votes.
-   * @return CompletableFuture&lt;PaginatedVotes&gt; A cursor-based paginated list of votes for your project, ordered by creation date.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @return CompletableFuture&lt;PaginatedVotes&gt; A cursor-based paginated list of votes for your
+   *     project, ordered by creation date.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<PaginatedVotes> getVotes(final TemporalAccessor since) {
@@ -193,8 +201,10 @@ public class TopggAPI {
    * Tries to get a cursor-based paginated list of votes for your project, ordered by creation date.
    *
    * @param cursor The reference page cursor to use.
-   * @return CompletableFuture&lt;PaginatedVotes&gt; A cursor-based paginated list of votes for your project, ordered by creation date.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @return CompletableFuture&lt;PaginatedVotes&gt; A cursor-based paginated list of votes for your
+   *     project, ordered by creation date.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<PaginatedVotes> getVotes(final String cursor) {

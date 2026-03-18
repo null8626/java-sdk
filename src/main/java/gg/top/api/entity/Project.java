@@ -1,8 +1,7 @@
 package gg.top.api.entity;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
  * A project listed on Top.gg.

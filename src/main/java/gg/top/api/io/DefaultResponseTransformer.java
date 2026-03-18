@@ -1,9 +1,7 @@
 package gg.top.api.io;
 
-import java.io.IOException;
-
 import com.google.gson.Gson;
-
+import java.io.IOException;
 import okhttp3.Response;
 
 /**
@@ -35,7 +33,8 @@ public class DefaultResponseTransformer<E> implements ResponseTransformer<E> {
    * @param response The HTTP response with a parsable body.
    * @return E The deserialized object.
    * @throws IOException Unable to parse HTTP response body.
-   * @throws JsonSyntaxException Unable to deserialize the HTTP response body to the specified class.
+   * @throws JsonSyntaxException Unable to deserialize the HTTP response body to the specified
+   *     class.
    * @since 1.0.0
    */
   @Override

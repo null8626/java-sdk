@@ -1,18 +1,16 @@
 package gg.top.api.io;
 
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import gg.top.api.TopggAPI;
 import gg.top.api.entity.PaginatedVotes;
 import gg.top.api.entity.Vote;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * A transformer tailored for deserializing into PaginatedVotes.

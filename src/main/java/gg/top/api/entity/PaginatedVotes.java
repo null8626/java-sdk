@@ -1,10 +1,8 @@
 package gg.top.api.entity;
 
+import gg.top.api.TopggAPI;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-
-import gg.top.api.TopggAPI;
-
 
 /**
  * A paginated list of a project's vote information.
@@ -46,7 +44,8 @@ public class PaginatedVotes {
    * Tries to advance to the next page.
    *
    * @return CompletionStage&lt;PaginatedVotes&gt; The next page of votes.
-   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the API.
+   * @throws UnsuccessfulHttpException The client has received a non-favorable response from the
+   *     API.
    * @since 1.0.0
    */
   public CompletionStage<PaginatedVotes> next() {

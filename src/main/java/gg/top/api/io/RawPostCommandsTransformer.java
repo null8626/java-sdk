@@ -1,9 +1,8 @@
 package gg.top.api.io;
 
+import com.google.gson.JsonArray;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import com.google.gson.JsonArray;
 
 /**
  * A PostCommandsTransformer implementation tailored for Gson JsonArrays.
@@ -18,7 +17,8 @@ public class RawPostCommandsTransformer implements PostCommandsTransformer {
   /**
    * Creates a new raw post commands transformer instance.
    *
-   * @param commands A list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * @param commands A list of your Discord bot's application commands in the form of Discord API's
+   *     raw JSON format.
    * @since 1.0.0
    */
   public RawPostCommandsTransformer(final JsonArray commands) {
@@ -26,9 +26,11 @@ public class RawPostCommandsTransformer implements PostCommandsTransformer {
   }
 
   /**
-   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw
+   * JSON format.
    *
-   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in
+   *     the form of Discord API's raw JSON format.
    * @since 1.0.0
    */
   @Override

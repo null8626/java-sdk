@@ -1,11 +1,9 @@
 package gg.top.api.jda;
 
-import java.util.concurrent.CompletionStage;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-
 import gg.top.api.io.PostCommandsTransformer;
+import java.util.concurrent.CompletionStage;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -31,9 +29,11 @@ public class JDAPostCommandsTransformer implements PostCommandsTransformer {
   }
 
   /**
-   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * Retrieves a list of your Discord bot's application commands in the form of Discord API's raw
+   * JSON format.
    *
-   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in the form of Discord API's raw JSON format.
+   * @return CompletableFuture&lt;String&gt; A list of your Discord bot's application commands in
+   *     the form of Discord API's raw JSON format.
    * @since 1.0.0
    */
   @Override

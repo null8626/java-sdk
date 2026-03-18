@@ -22,8 +22,11 @@ public final class TopggWidget {
    * @return String The widget URL.
    * @since 1.0.0
    */
-  public static String large(final Platform platform, final ProjectType projectType, final String id) {
-    return String.format("%s/large/%s/%s/%s", BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
+  public static String large(
+      final Platform platform, final ProjectType projectType, final String id) {
+    return String.format(
+        "%s/large/%s/%s/%s",
+        BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
   }
 
   /**
@@ -35,8 +38,11 @@ public final class TopggWidget {
    * @return String The widget URL.
    * @since 1.0.0
    */
-  public static String votes(final Platform platform, final ProjectType projectType, final String id) {
-    return String.format("%s/small/votes/%s/%s/%s", BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
+  public static String votes(
+      final Platform platform, final ProjectType projectType, final String id) {
+    return String.format(
+        "%s/small/votes/%s/%s/%s",
+        BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
   }
 
   /**
@@ -48,8 +54,11 @@ public final class TopggWidget {
    * @return String The widget URL.
    * @since 1.0.0
    */
-  public static String owner(final Platform platform, final ProjectType projectType, final String id) {
-    return String.format("%s/small/owner/%s/%s/%s", BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
+  public static String owner(
+      final Platform platform, final ProjectType projectType, final String id) {
+    return String.format(
+        "%s/small/owner/%s/%s/%s",
+        BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
   }
 
   /**
@@ -61,7 +70,10 @@ public final class TopggWidget {
    * @return String The widget URL.
    * @since 1.0.0
    */
-  public static String social(final Platform platform, final ProjectType projectType, final String id) {
-    return String.format("%s/small/social/%s/%s/%s", BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
+  public static String social(
+      final Platform platform, final ProjectType projectType, final String id) {
+    return String.format(
+        "%s/small/social/%s/%s/%s",
+        BASE_URL, platform.name().toLowerCase(), projectType.name().toLowerCase(), id);
   }
 }

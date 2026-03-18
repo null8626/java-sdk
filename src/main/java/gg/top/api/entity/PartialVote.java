@@ -1,8 +1,7 @@
 package gg.top.api.entity;
 
-import java.time.OffsetDateTime;
-
 import com.google.gson.annotations.SerializedName;
+import java.time.OffsetDateTime;
 
 /**
  * A brief information of a project's vote.
@@ -41,7 +40,8 @@ public class PartialVote {
   }
 
   /**
-   * The number of votes this vote counted for. This is a rounded integer value which determines how many points this individual vote was worth.
+   * The number of votes this vote counted for. This is a rounded integer value which determines how
+   * many points this individual vote was worth.
    *
    * @return int
    * @since 1.0.0
