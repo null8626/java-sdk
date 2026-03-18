@@ -1,11 +1,11 @@
 package gg.top.webhooks.dropwizard;
 
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.core.Response;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
 
 @Path("/webhook")
 public class CustomWebhooks extends TopggWebhooks {

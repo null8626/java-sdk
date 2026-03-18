@@ -1,10 +1,8 @@
 package gg.top.api;
 
-import java.util.stream.Stream;
-
 import gg.top.api.entity.Platform;
 import gg.top.api.entity.ProjectType;
-
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

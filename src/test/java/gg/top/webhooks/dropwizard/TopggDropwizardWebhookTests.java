@@ -1,5 +1,6 @@
 package gg.top.webhooks.dropwizard;
 
+import gg.top.webhooks.Mocks;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
@@ -10,7 +11,6 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import gg.top.webhooks.Mocks;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

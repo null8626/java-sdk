@@ -1,5 +1,6 @@
 package gg.top.webhooks.eclipsejetty;
 
+import gg.top.webhooks.Mocks;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +10,6 @@ import java.net.ProtocolException;
 import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import gg.top.webhooks.Mocks;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;

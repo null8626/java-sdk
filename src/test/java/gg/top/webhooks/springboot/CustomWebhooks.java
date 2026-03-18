@@ -4,7 +4,6 @@ import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
