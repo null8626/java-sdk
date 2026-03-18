@@ -351,6 +351,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 public class Webhooks extends TopggWebhooks<String> {
@@ -360,7 +361,7 @@ public class Webhooks extends TopggWebhooks<String> {
 
   // POST /webhook
   @PostMapping("/webhook")
-  public ResponseEntity<String> main(
+  public DeferredResult<ResponseEntity<String>> main(
       @RequestBody final String body,
       @RequestHeader("x-topgg-signature") final String signature,
       @RequestHeader("x-topgg-trace") final String trace) {
