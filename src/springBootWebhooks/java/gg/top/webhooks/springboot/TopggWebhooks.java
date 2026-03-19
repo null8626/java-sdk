@@ -11,6 +11,7 @@ import gg.top.webhooks.payload.Payload;
 import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -121,6 +122,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
       final HashMap<String, String> parsedSignature =
           Arrays.stream(signatureHeader.split(","))
               .map(part -> part.split("=", 2))
+              .filter(part -> part.length == 2)
               .collect(
                   Collectors.toMap(
                       part -> part[0].trim(),
@@ -128,10 +130,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
                       (existing, replacement) -> replacement,
                       HashMap::new));
 
-      final String signature = parsedSignature.get("v1");
+      final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
       final String timestamp = parsedSignature.get("t");
-
-      assert signature != null && timestamp != null;
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -141,7 +141,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
-      if (!signature.equals(HexFormat.of().formatHex(digest))) {
+      if (!MessageDigest.isEqual(signature, digest)) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
       }
 
@@ -171,7 +171,9 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
               error.getMessage(), body));
 
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
+    } catch (final ArrayIndexOutOfBoundsException
+        | NullPointerException
+        | JsonIOException ignored) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     } catch (final Throwable ignored) {
     }

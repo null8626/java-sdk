@@ -23,6 +23,7 @@ import jakarta.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -123,11 +124,10 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
     try {
       final String signatureHeader = request.getHeader("x-topgg-signature");
 
-      assert signatureHeader != null;
-
       final HashMap<String, String> parsedSignature =
           Arrays.stream(signatureHeader.split(","))
               .map(part -> part.split("=", 2))
+              .filter(part -> part.length == 2)
               .collect(
                   Collectors.toMap(
                       part -> part[0].trim(),
@@ -135,10 +135,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
                       (existing, replacement) -> replacement,
                       HashMap::new));
 
-      final String signature = parsedSignature.get("v1");
+      final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
       final String timestamp = parsedSignature.get("t");
-
-      assert signature != null && timestamp != null;
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -152,7 +150,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
-      if (!signature.equals(HexFormat.of().formatHex(digest))) {
+      if (!MessageDigest.isEqual(signature, digest)) {
         return Response.status(Response.Status.UNAUTHORIZED)
             .entity("Invalid Authorization")
             .build();
@@ -188,7 +186,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
 
       return Response.status(Response.Status.NO_CONTENT).build();
     } catch (final ArrayIndexOutOfBoundsException
-        | AssertionError
+        | NullPointerException
         | JsonIOException
         | IOException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();

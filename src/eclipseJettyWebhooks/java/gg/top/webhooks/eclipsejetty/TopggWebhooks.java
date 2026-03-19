@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
@@ -130,11 +131,10 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
     try {
       final String signatureHeader = request.getHeader("x-topgg-signature");
 
-      assert signatureHeader != null;
-
       final HashMap<String, String> parsedSignature =
           Arrays.stream(signatureHeader.split(","))
               .map(part -> part.split("=", 2))
+              .filter(part -> part.length == 2)
               .collect(
                   Collectors.toMap(
                       part -> part[0].trim(),
@@ -142,10 +142,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
                       (existing, replacement) -> replacement,
                       HashMap::new));
 
-      final String signature = parsedSignature.get("v1");
+      final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
       final String timestamp = parsedSignature.get("t");
-
-      assert signature != null && timestamp != null;
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -159,7 +157,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
       final byte[] digest =
           hmac.doFinal(String.format("%s.%s", timestamp, body).getBytes(StandardCharsets.UTF_8));
 
-      if (!signature.equals(HexFormat.of().formatHex(digest))) {
+      if (!MessageDigest.isEqual(signature, digest)) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Unauthorized");
 
@@ -205,7 +203,9 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
       return;
     } catch (final NoSuchAlgorithmException | InvalidKeyException error) {
       throw new ServletException("Unable to find an HMAC SHA-256 algorithm", error);
-    } catch (final ArrayIndexOutOfBoundsException | AssertionError | JsonIOException ignored) {
+    } catch (final ArrayIndexOutOfBoundsException
+        | NullPointerException
+        | JsonIOException ignored) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().write("Bad Request");
 
