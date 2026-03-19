@@ -6,6 +6,10 @@ import com.google.gson.annotations.SerializedName;
  * An 'integration.delete' webhook payload. Fires when a user has disconnected from your webhook
  * integration.
  *
+ * @see Payload
+ * @see IntegrationCreatePayload
+ * @see TestPayload
+ * @see VoteCreatePayload
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

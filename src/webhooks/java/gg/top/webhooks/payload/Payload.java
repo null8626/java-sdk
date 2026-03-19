@@ -7,6 +7,10 @@ import com.google.gson.JsonSyntaxException;
 /**
  * A Top.gg webhook payload.
  *
+ * @see IntegrationCreatePayload
+ * @see IntegrationDeletePayload
+ * @see TestPayload
+ * @see VoteCreatePayload
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

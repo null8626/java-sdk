@@ -8,6 +8,10 @@ import gg.top.webhooks.entity.User;
  * An 'integration.create' webhook payload. Fires when a user has connected to your webhook
  * integration.
  *
+ * @see Payload
+ * @see IntegrationDeletePayload
+ * @see TestPayload
+ * @see VoteCreatePayload
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

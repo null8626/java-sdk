@@ -8,6 +8,10 @@ import java.time.OffsetDateTime;
 /**
  * A 'vote.create' webhook payload. Fires when a user votes for your project.
  *
+ * @see Payload
+ * @see IntegrationCreatePayload
+ * @see IntegrationDeletePayload
+ * @see TestPayload
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

@@ -6,6 +6,10 @@ import gg.top.webhooks.entity.User;
 /**
  * A 'webhook.test' webhook payload. Fires upon sent test from the project dashboard.
  *
+ * @see Payload
+ * @see IntegrationCreatePayload
+ * @see IntegrationDeletePayload
+ * @see VoteCreatePayload
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
