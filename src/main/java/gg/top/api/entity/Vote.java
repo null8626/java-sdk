@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 /**
  * A project's vote information.
  *
+ * @see PaginatedVotes
+ * @see PartialVote
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

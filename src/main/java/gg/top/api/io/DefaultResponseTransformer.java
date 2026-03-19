@@ -8,6 +8,8 @@ import okhttp3.Response;
  * A generic JSON response transformer.
  *
  * @param <E> The target JSON deserializable class.
+ * @see ResponseTransformer
+ * @see EmptyResponseTransformer
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0

@@ -6,6 +6,8 @@ import okhttp3.Response;
  * A generic HTTP response transformer.
  *
  * @param <E> The target output class.
+ * @see DefaultResponseTransformer
+ * @see EmptyResponseTransformer
  * @author null8626 &amp; Top.gg
  * @version 1.0.0
  * @since 1.0.0
