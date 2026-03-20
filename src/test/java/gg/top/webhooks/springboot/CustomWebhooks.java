@@ -1,5 +1,6 @@
 package gg.top.webhooks.springboot;
 
+import gg.top.webhooks.Mocks;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
@@ -15,7 +16,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 @RestController
 public class CustomWebhooks extends TopggWebhooks<String> {
   public CustomWebhooks() {
-    super(System.getenv("TOPGG_WEBHOOK_SECRET"));
+    super(Mocks.SECRET);
   }
 
   @PostMapping("/webhook")

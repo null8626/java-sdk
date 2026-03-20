@@ -1,5 +1,6 @@
 package gg.top.webhooks.eclipsejetty;
 
+import gg.top.webhooks.Mocks;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 public class CustomWebhooks extends TopggWebhooks {
   public CustomWebhooks() {
-    super(System.getenv("TOPGG_WEBHOOK_SECRET"));
+    super(Mocks.SECRET);
   }
 
   private void reply(final String name, final HttpServletResponse response, final String trace) {

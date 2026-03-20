@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -25,12 +26,17 @@ public class TopggSpringBootWebhookTests {
   }
 
   private void send(final String name, final String payload) throws IOException, Exception {
-    mvc.perform(
-            MockMvcRequestBuilders.post("/webhook")
-                .content(payload)
-                .header("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload))
-                .header("x-topgg-trace", Mocks.TRACE)
-                .contentType(MediaType.APPLICATION_JSON))
+    final MvcResult result =
+        mvc.perform(
+                MockMvcRequestBuilders.post("/webhook")
+                    .content(payload)
+                    .header("x-topgg-signature", Mocks.signature(payload))
+                    .header("x-topgg-trace", Mocks.TRACE)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(MockMvcResultMatchers.request().asyncStarted())
+            .andReturn();
+
+    mvc.perform(MockMvcRequestBuilders.asyncDispatch(result))
         .andExpect(MockMvcResultMatchers.status().is(200))
         .andExpect(MockMvcResultMatchers.content().string("sb:" + name + "," + Mocks.TRACE));
   }

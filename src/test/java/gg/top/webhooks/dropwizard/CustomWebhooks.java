@@ -1,5 +1,6 @@
 package gg.top.webhooks.dropwizard;
 
+import gg.top.webhooks.Mocks;
 import gg.top.webhooks.payload.IntegrationCreatePayload;
 import gg.top.webhooks.payload.IntegrationDeletePayload;
 import gg.top.webhooks.payload.TestPayload;
@@ -10,7 +11,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/webhook")
 public class CustomWebhooks extends TopggWebhooks {
   public CustomWebhooks() {
-    super(System.getenv("TOPGG_WEBHOOK_SECRET"));
+    super(Mocks.SECRET);
   }
 
   @Override

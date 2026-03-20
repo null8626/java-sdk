@@ -45,7 +45,7 @@ public class TopggEclipseJettyWebhookTests {
 
     connection.setRequestMethod("POST");
     connection.setRequestProperty("Content-Type", "application/json");
-    connection.setRequestProperty("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload));
+    connection.setRequestProperty("x-topgg-signature", Mocks.signature(payload));
     connection.setRequestProperty("x-topgg-trace", Mocks.TRACE);
     connection.setDoOutput(true);
 

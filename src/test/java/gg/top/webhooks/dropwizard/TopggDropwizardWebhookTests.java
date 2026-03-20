@@ -36,7 +36,7 @@ public class TopggDropwizardWebhookTests {
             .target(String.format("http://localhost:%d/webhook", APP.getLocalPort()))
             .request()
             .header("Content-Type", "application/json")
-            .header("x-topgg-signature", Mocks.signature(Mocks.SECRET, payload))
+            .header("x-topgg-signature", Mocks.signature(payload))
             .header("x-topgg-trace", Mocks.TRACE)
             .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
 

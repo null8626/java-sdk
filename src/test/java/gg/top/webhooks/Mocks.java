@@ -32,12 +32,12 @@ public class Mocks {
     return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
   }
 
-  public static String signature(final String secret, final String body)
+  public static String signature(final String body)
       throws NoSuchAlgorithmException, InvalidKeyException {
     final long timestamp = Instant.now().getEpochSecond();
 
     final SecretKeySpec key =
-        new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     final Mac hmac = Mac.getInstance("HmacSHA256");
 
     hmac.init(key);
