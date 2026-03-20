@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,6 +53,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
   private final ExecutorService executor;
   private long timeoutValue;
   private TimeUnit timeoutUnit;
+  private long timestampWindowValue;
+  private TimeUnit timestampWindowUnit;
   private final Gson gson;
 
   /**
@@ -68,6 +71,9 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
 
     timeoutValue = 5;
     timeoutUnit = TimeUnit.SECONDS;
+
+    timestampWindowValue = 30;
+    timestampWindowUnit = TimeUnit.SECONDS;
 
     gson =
         new GsonBuilder()
@@ -106,7 +112,7 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
   }
 
   /**
-   * Sets the timeout for reading payloads.
+   * Sets the timeout for reading payloads. Defaults to five seconds.
    *
    * @param value The timeout duration value.
    * @param unit The timeout duration unit.
@@ -117,8 +123,22 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
     timeoutUnit = unit;
   }
 
+  /**
+   * Sets the accepted time window for timestamps before they get rejected to help mitigate replay
+   * attacks. Defaults to 30 seconds.
+   *
+   * @param value The timestamp window duration value.
+   * @param unit The timestamp window duration unit.
+   * @since 1.0.0
+   */
+  public void setTimestampWindow(final long value, final TimeUnit unit) {
+    timestampWindowValue = value;
+    timestampWindowUnit = unit;
+  }
+
   @SuppressWarnings("UseSpecificCatch")
   private Response dispatch(final HttpServletRequest request) {
+    final long currentTimestamp = Instant.now().getEpochSecond();
     String body = "";
 
     try {
@@ -136,7 +156,14 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
                       HashMap::new));
 
       final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
-      final String timestamp = parsedSignature.get("t");
+      final long timestamp = Long.parseUnsignedLong(parsedSignature.get("t"));
+
+      if (Math.abs(currentTimestamp - timestamp)
+          > timestampWindowUnit.toSeconds(timestampWindowValue)) {
+        return Response.status(Response.Status.FORBIDDEN)
+            .entity("Timestamp outside of accepted time window")
+            .build();
+      }
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -188,7 +215,8 @@ public abstract class TopggWebhooks implements TopggWebhookEventListener {
     } catch (final ArrayIndexOutOfBoundsException
         | NullPointerException
         | JsonIOException
-        | IOException ignored) {
+        | IOException
+        | NumberFormatException ignored) {
       return Response.status(Response.Status.BAD_REQUEST).entity("Bad Request").build();
     } catch (final Throwable ignored) {
     }

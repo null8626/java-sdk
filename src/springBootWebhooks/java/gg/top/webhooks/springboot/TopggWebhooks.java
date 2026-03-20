@@ -12,6 +12,7 @@ import gg.top.webhooks.payload.TestPayload;
 import gg.top.webhooks.payload.VoteCreatePayload;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
   private byte[] secret;
   private final ExecutorService executor;
   private final long timeout;
+  private final long timestampWindow;
   private final Gson gson;
 
   /**
@@ -50,12 +52,19 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * @param executor The executor service to use to process payload requests concurrently. Defaults
    *     to a 100-fixed thread pool.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @param timestampWindow The accepted time window for timestamps before they get rejected to help
+   *     mitigate replay attacks in milliseconds. Defaults to 30 seconds.
    * @since 1.0.0
    */
-  public TopggWebhooks(final String secret, final ExecutorService executor, final long timeout) {
+  public TopggWebhooks(
+      final String secret,
+      final ExecutorService executor,
+      final long timeout,
+      final long timestampWindow) {
     this.secret = secret.getBytes(StandardCharsets.UTF_8);
     this.executor = executor;
     this.timeout = timeout;
+    this.timestampWindow = timestampWindow / 1000;
     gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
@@ -71,7 +80,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
-    this(secret, executor, 5000L);
+    this(secret, executor, 5000L, 30000L);
   }
 
   /**
@@ -79,10 +88,12 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    *
    * @param secret The secret to use to authorize external requests.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @param timestampWindow The accepted time window for timestamps before they get rejected to help
+   *     mitigate replay attacks in milliseconds. Defaults to 30 seconds.
    * @since 1.0.0
    */
-  public TopggWebhooks(final String secret, final long timeout) {
-    this(secret, Executors.newFixedThreadPool(100), timeout);
+  public TopggWebhooks(final String secret, final long timeout, final long timestampWindow) {
+    this(secret, Executors.newFixedThreadPool(100), timeout, timestampWindow);
   }
 
   /**
@@ -92,7 +103,7 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret) {
-    this(secret, 5000L);
+    this(secret, 5000L, 30000L);
   }
 
   /**
@@ -118,6 +129,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
   @SuppressWarnings("UseSpecificCatch")
   private ResponseEntity<R> dispatchSync(
       final String body, final String signatureHeader, final String trace) {
+    final long currentTimestamp = Instant.now().getEpochSecond();
+
     try {
       final HashMap<String, String> parsedSignature =
           Arrays.stream(signatureHeader.split(","))
@@ -131,7 +144,11 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
                       HashMap::new));
 
       final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
-      final String timestamp = parsedSignature.get("t");
+      final long timestamp = Long.parseUnsignedLong(parsedSignature.get("t"));
+
+      if (Math.abs(currentTimestamp - timestamp) > timestampWindow) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      }
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -173,7 +190,8 @@ public class TopggWebhooks<R> implements TopggWebhookEventListener<R> {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (final ArrayIndexOutOfBoundsException
         | NullPointerException
-        | JsonIOException ignored) {
+        | JsonIOException
+        | NumberFormatException ignored) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     } catch (final Throwable ignored) {
     }

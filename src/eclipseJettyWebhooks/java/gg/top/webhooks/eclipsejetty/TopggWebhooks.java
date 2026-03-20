@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
   private byte[] secret;
   private final ExecutorService executor;
   private final long timeout;
+  private final long timestampWindow;
   private final Gson gson;
 
   /**
@@ -58,12 +60,19 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    * @param executor The executor service to use to process payload requests concurrently. Defaults
    *     to a 100-fixed thread pool.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @param timestampWindow The accepted time window for timestamps before they get rejected to help
+   *     mitigate replay attacks in milliseconds. Defaults to 30 seconds.
    * @since 1.0.0
    */
-  public TopggWebhooks(final String secret, final ExecutorService executor, final long timeout) {
+  public TopggWebhooks(
+      final String secret,
+      final ExecutorService executor,
+      final long timeout,
+      final long timestampWindow) {
     this.secret = secret.getBytes(StandardCharsets.UTF_8);
     this.executor = executor;
     this.timeout = timeout;
+    this.timestampWindow = timestampWindow / 1000;
     gson =
         new GsonBuilder()
             .registerTypeAdapter(OffsetDateTime.class, new OffsetDateTimeConverter())
@@ -79,7 +88,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret, final ExecutorService executor) {
-    this(secret, executor, 5000L);
+    this(secret, executor, 5000L, 30000L);
   }
 
   /**
@@ -87,10 +96,12 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    *
    * @param secret The secret to use to authorize external requests.
    * @param timeout The timeout for reading payloads in milliseconds. Defaults to five seconds.
+   * @param timestampWindow The accepted time window for timestamps before they get rejected to help
+   *     mitigate replay attacks in milliseconds. Defaults to 30 seconds.
    * @since 1.0.0
    */
-  public TopggWebhooks(final String secret, final long timeout) {
-    this(secret, Executors.newFixedThreadPool(100), timeout);
+  public TopggWebhooks(final String secret, final long timeout, final long timestampWindow) {
+    this(secret, Executors.newFixedThreadPool(100), timeout, timestampWindow);
   }
 
   /**
@@ -100,7 +111,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
    * @since 1.0.0
    */
   public TopggWebhooks(final String secret) {
-    this(secret, 5000L);
+    this(secret, 5000L, 30000L);
   }
 
   /**
@@ -126,6 +137,7 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
   @SuppressWarnings("UseSpecificCatch")
   private void dispatch(final HttpServletRequest request, final HttpServletResponse response)
       throws IOException, ServletException {
+    final long currentTimestamp = Instant.now().getEpochSecond();
     String body = "";
 
     try {
@@ -143,7 +155,14 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
                       HashMap::new));
 
       final byte[] signature = HexFormat.of().parseHex(parsedSignature.get("v1"));
-      final String timestamp = parsedSignature.get("t");
+      final long timestamp = Long.parseUnsignedLong(parsedSignature.get("t"));
+
+      if (Math.abs(currentTimestamp - timestamp) > timestampWindow) {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getWriter().write("Timestamp outside of accepted time window");
+
+        return;
+      }
 
       final SecretKeySpec key = new SecretKeySpec(secret, "HmacSHA256");
       final Mac hmac = Mac.getInstance("HmacSHA256");
@@ -205,7 +224,8 @@ public class TopggWebhooks extends HttpServlet implements TopggWebhookEventListe
       throw new ServletException("Unable to find an HMAC SHA-256 algorithm", error);
     } catch (final ArrayIndexOutOfBoundsException
         | NullPointerException
-        | JsonIOException ignored) {
+        | JsonIOException
+        | NumberFormatException ignored) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().write("Bad Request");
 
